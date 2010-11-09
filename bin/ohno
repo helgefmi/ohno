@@ -17,7 +17,7 @@ def main():
         instance = ohno.ohno.Ohno(ROOT_DIR)
         instance.start_resume_game()
         instance.loop()
-        instance.shutdown()
+        # If we're done looping, it means Ohno had a successful shutdown.
     except:
         # Need to shut down curses before the traceback.
         instance.save() # Will call shutdown

@@ -5,7 +5,7 @@ from loglady import LogLady
 from ohno.client.client import Client
 from ohno.senses import Senses
 from ohno.framebuffer import FrameBuffer
-from ohno.display import Display
+from ohno.ui import UI
 from ohno.hero import Hero
 from ohno.dungeon.dungeon import Dungeon
 
@@ -13,12 +13,12 @@ class Ohno:
     def __init__(self, ROOT_DIR):
         # Make sure __init__ doesn't do any crazy stuff.
         # Should always make sure initializing Ohno won't throw any exceptions.
-        self.logger = LogLady(ROOT_DIR + '/logs', ('ohno', 'client', 'telnet', 'senses', 'hero', 'dungeon', 'display'))
+        self.logger = LogLady(ROOT_DIR + '/logs', ('ohno', 'client', 'telnet', 'senses', 'hero', 'dungeon', 'ui'))
 
         self.client = Client(self)
         self.senses = Senses(self)
         self.framebuffer = FrameBuffer(self)
-        self.display = Display(self)
+        self.ui = UI(self)
         self.hero = Hero(self)
         self.dungeon = Dungeon(self)
 
@@ -30,7 +30,7 @@ class Ohno:
         self.running = True
         while self.running:
             self.senses.update()
-            self.display.update()
+            self.ui.update()
 
             # Temporary hack untill the bot has an AI.
             import time
@@ -38,7 +38,7 @@ class Ohno:
 
     def shutdown(self):
         # Called from the main binary file.
-        self.display.shutdown() # Curses
+        self.ui.shutdown() # Curses
         self.running = False
 
     def save(self):
