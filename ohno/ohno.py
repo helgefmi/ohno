@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import # else `from ohno.*` will use ohno.py as base
 
 from loglady import LogLady
 
@@ -11,6 +11,8 @@ from ohno.dungeon.dungeon import Dungeon
 
 class Ohno:
     def __init__(self, ROOT_DIR):
+        # Make sure __init__ doesn't do any crazy stuff.
+        # Should always make sure initializing Ohno won't throw any exceptions.
         self.logger = LogLady(ROOT_DIR + '/logs', ('ohno', 'client', 'telnet', 'senses', 'hero', 'dungeon', 'display'))
 
         self.client = Client(self)
@@ -20,9 +22,8 @@ class Ohno:
         self.hero = Hero(self)
         self.dungeon = Dungeon(self)
 
+    def start_resume_game(self):
         self.logger.ohno('Starting/resuming game..')
-
-    def start(self):
         self.client.start_resume_game()
 
     def loop(self):
@@ -30,8 +31,10 @@ class Ohno:
             self.senses.update()
             self.display.update()
 
+            # Temporary hack untill the bot has an AI.
             import time
             time.sleep(0.5)
 
     def shutdown(self):
-        self.display.shutdown()
+        # Called from the main binary file.
+        self.display.shutdown() # Curses

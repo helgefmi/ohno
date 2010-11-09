@@ -1,6 +1,7 @@
 from ansiterm import Ansiterm
 
 class FrameBuffer:
+    """Wraps around ansiterm and has some nethack specific functions to query ansiterm"""
     def __init__(self, ohno):
         self.ohno = ohno
         self.ansiterm = Ansiterm(24, 80)
@@ -9,7 +10,7 @@ class FrameBuffer:
         return self.ansiterm.feed(data)
 
     def get_topline(self):
-        return self.ansiterm.get_string(0, 79)
+        return self.ansiterm.get_string(0, 80)
 
     def get_bottomlines(self):
         return self.ansiterm.get_string(80 * 22, 80 * 24)
@@ -19,4 +20,4 @@ class FrameBuffer:
 
     def get_cursor(self):
         cursor = self.ansiterm.get_cursor()
-        return (int(cursor['x']), int(cursor['y']))
+        return (int(cursor['y']), int(cursor['x']))

@@ -6,6 +6,15 @@ class Senses:
         self.ohno = ohno
     
     def update(self):
+        """
+        1. Read from the client
+        2. Gather messages and press space and goto 1. if we get a "--More--" message
+        3. TODO: handle menus
+        4. Update Hero (stats, position, dlvl, etc)
+        5. Update the dungeon (current level)
+        6. TODO: Send out signals for the messages, such that various submodules
+                 can listen to them and act accordingly.
+        """
         self.ohno.logger.senses('Updating senses..')
 
         messages = ''
@@ -16,8 +25,8 @@ class Senses:
             messages += self.ohno.framebuffer.get_topline()
 
             if '--More--' in messages:
-                messages = messages.replace('--More--', '  ')
-                self.ohno.client.send(' ')
+                messages = messages.replace('--More--', '  ') # double space so we can split on it later
+                self.ohno.client.send(' ') # There's more messages in store for us!
             else:
                 break
 
