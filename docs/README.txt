@@ -1,3 +1,6 @@
 A nethack bot.
 
-You need loglady (https://github.com/helgefmi/loglady) and ansiterm (https://github.com/helgefmi/ansiterm) somewhere in PYTHONPATH to run this.
+To run ohno, you need the following modules somewhere in PYTHONPATH:
+- loglady (https://github.com/helgefmi/loglady)
+- ansiterm (https://github.com/helgefmi/ansiterm)
+- bpython (http://www.bpython-interpreter.org/)

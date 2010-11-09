@@ -1,4 +1,5 @@
 import curses
+import bpython
 
 _ansi_to_curses_colors = (
     curses.COLOR_BLACK, curses.COLOR_RED,
@@ -24,6 +25,7 @@ class Display:
         curses.noecho()
         curses.cbreak()
         self._scr.keypad(1)
+        self._scr.nodelay(1)
         self._scr.move(0, 0)
         self._scr.clear()
         self._scr.refresh()
@@ -32,6 +34,7 @@ class Display:
     def shutdown(self):
         self.ohno.logger.display('Shutting down..')
         self._scr.keypad(0)
+        self._scr.nodelay(0)
         curses.echo()
         curses.nocbreak()
         curses.endwin()
@@ -41,6 +44,18 @@ class Display:
         self._draw_maptiles()
         self._draw_botlines()
         self._scr.refresh()
+        self._parse_input()
+
+    def _parse_input(self):
+        """Checks if the user pressed a key"""
+        input = self._scr.getch()
+        if 0 < input < 255:
+            input = chr(input)
+            if input == '|':
+                embedded_locals = {
+                    'ohno': self.ohno
+                }
+                bpython.embed(locals_=embedded_locals)
 
     def _draw_maptiles(self):
         for y in xrange(21):
