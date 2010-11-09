@@ -16,6 +16,7 @@ class Keyboard:
                     'ohno': self.ohno
                 }
                 bpython.embed(locals_=embedded_locals)
+                self.ohno.ui.curses.init_colors()
             elif input == 'S':
                 self.ohno.save()
 

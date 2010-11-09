@@ -19,9 +19,7 @@ class Curses:
         self.ohno.logger.curses('Initializing curses..')
         self._scr = curses.initscr()
         curses.start_color()
-        # the first pair (index 0) is hardcoded to black on black
-        for x in xrange(1, 8):
-            curses.init_pair(x, _ansi_to_curses_colors[x], 0)
+        self.init_colors()
         curses.noecho()
         curses.cbreak()
         self._scr.keypad(1)
@@ -39,6 +37,11 @@ class Curses:
         curses.nocbreak()
         curses.endwin()
         self.ohno.logger.curses('Curses should be deinitialized now')
+
+    def init_colors(self):
+        # the first pair (index 0) is hardcoded to black on black
+        for x in xrange(1, 8):
+            curses.init_pair(x, _ansi_to_curses_colors[x], 0)
 
     def refresh(self):
         return self._scr.refresh()
