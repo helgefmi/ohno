@@ -5,7 +5,7 @@ from loglady import LogLady
 from ohno.client.client import Client
 from ohno.senses import Senses
 from ohno.framebuffer import FrameBuffer
-from ohno.ui import UI
+from ohno.ui.ui import UI
 from ohno.hero import Hero
 from ohno.dungeon.dungeon import Dungeon
 
