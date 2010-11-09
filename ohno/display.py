@@ -47,17 +47,22 @@ class Display:
         self._parse_input()
 
     def _parse_input(self):
+        self.ohno.logger.display('Checking for input from keyboard..')
         """Checks if the user pressed a key"""
         input = self._scr.getch()
         if 0 < input < 255:
             input = chr(input)
             if input == '|':
+                # Opens up a bpython REPL.
                 embedded_locals = {
                     'ohno': self.ohno
                 }
                 bpython.embed(locals_=embedded_locals)
+            elif input == 'S':
+                self.ohno.save()
 
     def _draw_maptiles(self):
+        self.ohno.logger.display('Drawing map tiles..')
         for y in xrange(21):
             for x in xrange(80):
                 idx = y * 80 + x
@@ -65,6 +70,7 @@ class Display:
                 self._scr.addch(y, x, ord(tile.glyph), _convert_color(tile.color))
 
     def _draw_botlines(self):
+        self.ohno.logger.display('Drawing bottomlines..')
         hero = self.ohno.hero
         first = 'P:%2d,%2d' % (hero.position[0], hero.position[1])
         secound = 'D:%d H:%d/%d A:%d X:%d T:%d $%d' % (hero.dlvl, hero.hp, hero.hpmax, hero.ac, hero.level, hero.turns, hero.gold)

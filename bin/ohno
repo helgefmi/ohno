@@ -20,7 +20,7 @@ def main():
         instance.shutdown()
     except:
         # Need to shut down curses before the traceback.
-        instance.shutdown()
+        instance.save() # Will call shutdown
         traceback.print_exc()
 
 if __name__ == '__main__':

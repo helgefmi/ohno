@@ -27,7 +27,8 @@ class Ohno:
         self.client.start_resume_game()
 
     def loop(self):
-        while True:
+        self.running = True
+        while self.running:
             self.senses.update()
             self.display.update()
 
@@ -38,3 +39,8 @@ class Ohno:
     def shutdown(self):
         # Called from the main binary file.
         self.display.shutdown() # Curses
+        self.running = False
+
+    def save(self):
+        self.client.send('\x1b\x1b\x1b\x1bSyq')
+        self.shutdown()
