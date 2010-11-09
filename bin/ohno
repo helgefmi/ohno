@@ -3,6 +3,7 @@
 
 import sys
 import os
+import traceback
 
 def main():
     BIN_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -11,8 +12,16 @@ def main():
     sys.path.extend([ROOT_DIR, os.path.join(ROOT_DIR, 'lib', 'loglady'), os.path.join(ROOT_DIR, 'lib', 'ansiterm')])
     import ohno.ohno
 
-    instance = ohno.ohno.Ohno(ROOT_DIR)
-    instance.loop()
+    instance = None
+    try:
+        instance = ohno.ohno.Ohno(ROOT_DIR)
+        instance.start()
+        instance.loop()
+        instance.shutdown()
+    except:
+        # Need to shut down curses before the traceback.
+        instance.shutdown()
+        traceback.print_exc()
 
 if __name__ == '__main__':
     main()

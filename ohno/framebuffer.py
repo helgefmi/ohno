@@ -12,7 +12,7 @@ class FrameBuffer:
         return self.ansiterm.get_string(0, 79)
 
     def get_bottomlines(self):
-        return self.ansiterm.get_string(80 * 22, 80 * 24 - 1)
+        return self.ansiterm.get_string(80 * 22, 80 * 24)
 
     def get_maptiles(self):
         return self.ansiterm.get_tiles(80, 80 * 22)

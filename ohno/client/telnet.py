@@ -24,6 +24,7 @@ class Telnet():
     def start_resume_game(self):
         self.ohno.logger.telnet('Telnet negotiation ..')
         self.ohno.client.send("\xff\xfb\x18\xff\xfa\x18\x00xterm-color\xff\xf0\xff\xfc \xff\xfc#\xff\xfc'\xff\xfe\x03\xff\xfb\x01\xff\xfd\x05\xff\xfb!\xff\xfb\x1f\xff\xfa\x1f\x00P\x00\x18\xff\xf0")
+        self.ohno.logger.telnet('(DEBUG) before receive')
         data = self.receive()
         assert 'Not logged in' in data
         self.ohno.logger.telnet('We have a DGL screen!')
@@ -31,6 +32,7 @@ class Telnet():
 
         self.ohno.logger.telnet('Logging in as %s..' % config.DGL_CREDS[0])
         self.ohno.client.send("l%s\n%s\n" % (config.DGL_CREDS))
+        self.ohno.logger.telnet('(DEBUG) before receive')
         data = self.receive()
         assert 'Logged in as' in data
         self.ohno.logger.telnet('Login successful!')

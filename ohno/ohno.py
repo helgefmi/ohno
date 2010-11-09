@@ -11,7 +11,7 @@ from ohno.dungeon.dungeon import Dungeon
 
 class Ohno:
     def __init__(self, ROOT_DIR):
-        self.logger = LogLady(ROOT_DIR + '/logs', ('ohno', 'client', 'telnet', 'senses', 'hero', 'dungeon'))
+        self.logger = LogLady(ROOT_DIR + '/logs', ('ohno', 'client', 'telnet', 'senses', 'hero', 'dungeon', 'display'))
 
         self.client = Client(self)
         self.senses = Senses(self)
@@ -21,9 +21,17 @@ class Ohno:
         self.dungeon = Dungeon(self)
 
         self.logger.ohno('Starting/resuming game..')
+
+    def start(self):
         self.client.start_resume_game()
 
     def loop(self):
         while True:
             self.senses.update()
             self.display.update()
+
+            import time
+            time.sleep(0.5)
+
+    def shutdown(self):
+        self.display.shutdown()
