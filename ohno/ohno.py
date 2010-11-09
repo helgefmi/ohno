@@ -13,7 +13,9 @@ class Ohno:
     def __init__(self, ROOT_DIR):
         # Make sure __init__ doesn't do any crazy stuff.
         # Should always make sure initializing Ohno won't throw any exceptions.
-        self.logger = LogLady(ROOT_DIR + '/logs', ('ohno', 'client', 'telnet', 'senses', 'hero', 'dungeon', 'ui'))
+        self.logger = LogLady(ROOT_DIR + '/logs', \
+            ('ohno', 'client', 'telnet', 'senses', 'hero', 'dungeon', \
+             'ui', 'curses', 'keyboard'))
 
         self.client = Client(self)
         self.senses = Senses(self)

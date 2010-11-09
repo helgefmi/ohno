@@ -5,7 +5,7 @@ class Keyboard:
         self.ohno = ohno
 
     def update(self):
-        self.ohno.logger.ui('Checking for input from keyboard..')
+        self.ohno.logger.keyboard('Checking for input from keyboard..')
         """Checks if the user pressed a key"""
         input = self.ohno.ui.getch()
         if 0 < input < 255:

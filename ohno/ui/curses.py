@@ -16,7 +16,7 @@ class Curses:
     def __init__(self, ohno):
         self.ohno = ohno
 
-        self.ohno.logger.ui('Initializing curses..')
+        self.ohno.logger.curses('Initializing curses..')
         self._scr = curses.initscr()
         curses.start_color()
         # the first pair (index 0) is hardcoded to black on black
@@ -29,16 +29,16 @@ class Curses:
         self._scr.move(0, 0)
         self._scr.clear()
         self._scr.refresh()
-        self.ohno.logger.ui('Curses initialized.')
+        self.ohno.logger.curses('Curses initialized.')
     
     def shutdown(self):
-        self.ohno.logger.ui('Shutting down..')
+        self.ohno.logger.curses('Shutting down..')
         self._scr.keypad(0)
         self._scr.nodelay(0)
         curses.echo()
         curses.nocbreak()
         curses.endwin()
-        self.ohno.logger.ui('Curses should be deinitialized now')
+        self.ohno.logger.curses('Curses should be deinitialized now')
 
     def refresh(self):
         return self._scr.refresh()
@@ -47,7 +47,7 @@ class Curses:
         return self._scr.getch()
 
     def draw_maptiles(self):
-        self.ohno.logger.ui('Drawing map tiles..')
+        self.ohno.logger.curses('Drawing map tiles..')
         for y in xrange(21):
             for x in xrange(80):
                 idx = y * 80 + x
@@ -55,7 +55,7 @@ class Curses:
                 self._scr.addch(y, x, ord(tile.glyph), _convert_color(tile.color))
 
     def draw_botlines(self):
-        self.ohno.logger.ui('Drawing bottomlines..')
+        self.ohno.logger.curses('Drawing bottomlines..')
         hero = self.ohno.hero
         first = 'P:%2d,%2d' % (hero.position[0], hero.position[1])
         secound = 'D:%d H:%d/%d A:%d X:%d T:%d $%d' % (hero.dlvl, hero.hp, hero.hpmax, hero.ac, hero.level, hero.turns, hero.gold)
