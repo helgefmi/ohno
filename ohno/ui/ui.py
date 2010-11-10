@@ -1,11 +1,11 @@
 from ohno.ui.curses import Curses
-from ohno.ui.keyboard import Keyboard
+from ohno.ui.input import Input
 
 class UI:
     def __init__(self, ohno):
         self.ohno = ohno
         self.curses = Curses(ohno)
-        self.keyboard = Keyboard(ohno)
+        self.input = Input(ohno)
 
     def shutdown(self):
         self.curses.shutdown()
@@ -17,4 +17,4 @@ class UI:
         self.curses.draw_maptiles()
         self.curses.draw_botlines()
         self.curses.refresh()
-        self.keyboard.update()
+        self.input.update()
