@@ -61,7 +61,7 @@ class Curses:
         self.ohno.logger.curses('Drawing bottomlines..')
         hero = self.ohno.hero
         first = 'P:%2d,%2d' % (hero.position[0], hero.position[1])
-        secound = 'D:%d H:%d/%d A:%d X:%d T:%d $%d' % (hero.dlvl, hero.hp, hero.hpmax, hero.ac, hero.level, hero.turns, hero.gold)
+        secound = 'D:%d H:%d/%d A:%d X:%d T:%d $%d' % (hero.dlvl, hero.hp, hero.maxhp, hero.ac, hero.level, hero.turns, hero.gold)
 
         self._scr.addstr(21, 0, first)
         self._scr.addstr(22, 0, secound)

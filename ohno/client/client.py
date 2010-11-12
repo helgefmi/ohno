@@ -1,5 +1,6 @@
 from ohno import config
 from ohno.client.telnet import Telnet
+from ohno.client.pty import Pty
 
 class Client():
     """Wraps around a specific NetHack client (telnet, /usr/bin/nethack, ..)"""
@@ -9,9 +10,11 @@ class Client():
         if config.CLIENT == 'telnet':
             self.ohno.logger.client('Initializing telnet client')
             self._client = Telnet(ohno)
-        else:
+        elif config.CLIENT == 'pty':
             self.ohno.logger.client('Initializing nethack client')
-            self._client = Nethack(ohno)
+            self._client = Pty(ohno)
+        else:
+            assert False
 
     def start_resume_game(self):
         """
@@ -19,7 +22,8 @@ class Client():
         such that we can start running ohno.senses.update()
         """
         self.ohno.logger.client('Starting/resuming game..')
-        return self._client.start_resume_game()
+        self._client.start_resume_game()
+        self.ohno.logger.client('Game should be started/resumed.')
 
     def send(self, data):
         self.ohno.logger.client('> ' + repr(data))
