@@ -15,13 +15,14 @@ class Pty():
         return os.write(self.child, data)
 
     def receive(self):
-        time.sleep(0.1)
+        time.sleep(0.05)
         return os.read(self.child, 8096)
 
     def start_resume_game(self):
         pid, self.child = pty.fork()
         if pid == 0:
             self.ohno.logger.pty('(CHILD) Running nethack..')
+            os.environ['TERM'] = 'xterm'
             os.execv('/usr/games/nethack', [''])
             self.ohno.logger.pty('(CHILD) This should never happen.')
             os.exit(1)

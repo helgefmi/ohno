@@ -4,6 +4,7 @@
 import sys
 import os
 import traceback
+import bpython
 
 def main():
     BIN_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -18,9 +19,18 @@ def main():
         instance.start_resume_game()
         instance.loop()
         # If we're done looping, it means Ohno had a successful shutdown.
-    except:
+    except KeyboardInterrupt:
+        instance.logger.ohno('Ctrl+C. Saving game')
+        instance.save() # Will call shutdown
+    except Exception, e:
+        instance.logger.ohno('Got an exception: "%s"' % e)
         # Need to shut down curses before the traceback.
         instance.save() # Will call shutdown
+        bpython_locals = {
+            'ohno': instance,
+            'e': e
+        }
+        bpython.embed(locals_=bpython_locals)
         traceback.print_exc()
 
 if __name__ == '__main__':

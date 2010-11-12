@@ -1,11 +1,13 @@
 from ohno.ui.curses import Curses
 from ohno.ui.input import Input
+from ohno.ui.normalmode import NormalMode
 
 class UI:
     def __init__(self, ohno):
         self.ohno = ohno
         self.curses = Curses(ohno)
         self.input = Input(ohno)
+        self.mode = NormalMode(ohno)
 
     def shutdown(self):
         self.curses.shutdown()

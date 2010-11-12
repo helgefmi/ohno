@@ -1,5 +1,8 @@
 from __future__ import absolute_import # else `from ohno.*` will use ohno.py as base
 
+import random
+import time
+
 from loglady import LogLady
 
 from ohno.client.client import Client
@@ -30,13 +33,16 @@ class Ohno:
 
     def loop(self):
         self.running = True
+        self.paused = False
         while self.running:
             self.senses.update()
             self.ui.update()
+            while self.paused:
+                time.sleep(0.1)
+                self.ui.update()
 
             # Temporary hack untill the bot has an AI.
-            import time
-            time.sleep(0.5)
+            self.client.send('yubnhjkl'[random.randint(0, 7)])
 
     def shutdown(self):
         # Called from the main binary file.
