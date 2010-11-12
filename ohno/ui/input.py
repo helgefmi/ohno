@@ -6,7 +6,6 @@ class Input:
 
     def update(self):
         """Checks if the user pressed a key and acts accordingly"""
-        self.ohno.logger.input('Checking for input from keyboard..')
         input = self.ohno.ui.getch()
         if 0 < input < 255:
             input = chr(input).lower()

@@ -7,13 +7,16 @@ class UI:
         self.ohno = ohno
         self.curses = Curses(ohno)
         self.input = Input(ohno)
-        self.mode = NormalMode(ohno)
+        self.set_mode(NormalMode(ohno))
 
     def shutdown(self):
         self.curses.shutdown()
 
     def getch(self):
         return self.curses.getch()
+
+    def set_mode(self, mode):
+        self.mode = mode
 
     def update(self):
         self.curses.draw_maptiles()

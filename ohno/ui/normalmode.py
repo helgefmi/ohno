@@ -3,6 +3,7 @@ import bpython
 class NormalMode:
     def __init__(self, ohno):
         self.ohno = ohno
+        self.ohno.paused = False
 
     def on_input(self, input):
         if input == '|':
@@ -16,6 +17,9 @@ class NormalMode:
             self.ohno.save()
         elif input == 'p':
             self.ohno.paused = not self.ohno.paused
+        elif input == 'd':
+            from ohno.ui.debugmode import DebugMode
+            self.ohno.ui.set_mode(DebugMode(self.ohno))
 
     def tile_to_glyph(self, tile):
         return ord(tile.glyph)

@@ -42,7 +42,6 @@ class Curses:
         return self._scr.getch()
 
     def draw_maptiles(self):
-        self.ohno.logger.curses('Drawing map tiles..')
         for y in xrange(21):
             for x in xrange(80):
                 idx = y * 80 + x
@@ -52,8 +51,7 @@ class Curses:
                 self._scr.addch(y, x, glyph, color)
 
     def draw_botlines(self):
-        self.ohno.logger.curses('Drawing bottomlines..')
-        first = self.ohno.ui.mode.first_botline()
+        first = str(self.ohno.ui.mode) + '|' + self.ohno.ui.mode.first_botline()
         secound = self.ohno.ui.mode.secound_botline()
 
         self._scr.addstr(21, 0, first)

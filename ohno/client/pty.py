@@ -15,19 +15,21 @@ class Pty():
         return os.write(self.child, data)
 
     def receive(self):
-        time.sleep(0.05)
-        return os.read(self.child, 8096)
+        time.sleep(0.1)
+        return os.read(self.child, 80960)
 
     def start_resume_game(self):
         pid, self.child = pty.fork()
         if pid == 0:
             self.ohno.logger.pty('(CHILD) Running nethack..')
-            os.environ['TERM'] = 'xterm'
+            os.environ['TERM'] = 'xterm-color'
+            os.environ['COLUMNS'] = '80'
+            os.environ['LINES'] = '24'
             os.execv('/usr/games/nethack', [''])
             self.ohno.logger.pty('(CHILD) This should never happen.')
             os.exit(1)
         else:
-            time.sleep(0.5)
+            time.sleep(0.3)
             self.ohno.logger.pty('(PARENT) Receving initial data from child..')
             data = self.receive()
             if 'Shall I pick a character' in data:

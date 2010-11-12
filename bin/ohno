@@ -25,7 +25,9 @@ def main():
     except Exception, e:
         instance.logger.ohno('Got an exception: "%s"' % e)
         # Need to shut down curses before the traceback.
-        instance.save() # Will call shutdown
+        instance.save() # Will call self.shutdown()
+
+        # TODO: Make a debug uimode we can use when exceptions occurs.
         bpython_locals = {
             'ohno': instance,
             'e': e

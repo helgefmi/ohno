@@ -38,7 +38,7 @@ class Ohno:
             self.senses.update()
             self.ui.update()
             while self.paused:
-                time.sleep(0.1)
+                time.sleep(0.01)
                 self.ui.update()
 
             # Temporary hack untill the bot has an AI.
