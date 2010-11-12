@@ -1,5 +1,6 @@
 from ohno.ui.curses import Curses
 from ohno.ui.input import Input
+from ohno.ui.uimode import UIMode
 from ohno.ui.normalmode import NormalMode
 
 class UI:
@@ -16,10 +17,13 @@ class UI:
         return self.curses.getch()
 
     def set_mode(self, mode):
+        self.ohno.logger.ui('Setting mode to %s' % mode)
         self.mode = mode
 
     def update(self):
         self.curses.draw_maptiles()
         self.curses.draw_botlines()
         self.curses.refresh()
-        self.input.update()
+        ret = self.input.update()
+        if ret is not None:
+            self.set_mode(ret(self.ohno))

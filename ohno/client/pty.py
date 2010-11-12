@@ -16,7 +16,10 @@ class Pty():
 
     def receive(self):
         time.sleep(0.1)
-        return os.read(self.child, 80960)
+        ret = os.read(self.child, 4096)
+        if len(ret) >= 4095:
+            ret += os.read(self.child, 4096)
+        return ret
 
     def start_resume_game(self):
         pid, self.child = pty.fork()

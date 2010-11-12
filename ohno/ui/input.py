@@ -9,4 +9,4 @@ class Input:
         input = self.ohno.ui.getch()
         if 0 < input < 255:
             input = chr(input).lower()
-            self.ohno.ui.mode.on_input(input)
+            return self.ohno.ui.mode.on_input(input)
