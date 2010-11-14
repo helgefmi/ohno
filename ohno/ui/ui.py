@@ -4,6 +4,7 @@ from ohno.ui.uimode import UIMode
 from ohno.ui.normalmode import NormalMode
 
 class UI:
+    """The main controller of input/output from/to the user"""
     def __init__(self, ohno):
         self.ohno = ohno
         self.curses = Curses(ohno)
@@ -23,7 +24,6 @@ class UI:
     def update(self):
         self.curses.draw_maptiles()
         self.curses.draw_botlines()
-        self.curses.refresh()
         ret = self.input.update()
         if ret is not None:
             self.set_mode(ret(self.ohno))

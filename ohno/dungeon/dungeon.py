@@ -20,7 +20,8 @@ class Dungeon:
         if dlvl not in self.levels:
             self.ohno.logger.dungeon('Found new level (dlvl %d)!' % dlvl)
             self.levels[dlvl] = Level(self.ohno)
-            self.curlevel = self.levels[dlvl]
+
+        self.curlevel = self.levels[dlvl]
         self.curlevel.update()
 
         idx = self.ohno.hero.get_position_idx()

@@ -3,6 +3,7 @@ from __future__ import absolute_import
 import curses
 
 class Curses:
+    """A class used by ohno.ui to display the current state of ohno."""
     _ansi_to_curses_colors = (
         curses.COLOR_BLACK, curses.COLOR_RED,
         curses.COLOR_GREEN, curses.COLOR_YELLOW,
@@ -15,6 +16,10 @@ class Curses:
 
         self.ohno.logger.curses('Initializing curses..')
         self._scr = curses.initscr()
+        self.start_curses()
+
+    def start_curses(self):
+        """Is used to reinitialize curses after calling bpython.embed"""
         curses.start_color()
         self.init_colors()
         curses.noecho()
@@ -27,6 +32,7 @@ class Curses:
         self.ohno.logger.curses('Curses initialized.')
 
     def shutdown(self):
+        """Deinitializes curses"""
         self.ohno.logger.curses('Shutting down..')
         self._scr.keypad(0)
         self._scr.nodelay(0)

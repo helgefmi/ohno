@@ -1,7 +1,10 @@
 from ansiterm import Ansiterm
 
 class FrameBuffer:
-    """Wraps around ansiterm and has some nethack specific functions to query ansiterm"""
+    """
+    Wraps around `ansiterm`, and includes nethack specific functions to make
+    life easier.
+    """
     def __init__(self, ohno):
         self.ohno = ohno
         self.ansiterm = Ansiterm(24, 80)

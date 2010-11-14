@@ -1,4 +1,4 @@
-from __future__ import absolute_import # else `from ohno.*` will use ohno.py as base
+from __future__ import absolute_import
 
 import random
 import time
@@ -13,13 +13,18 @@ from ohno.hero import Hero
 from ohno.dungeon.dungeon import Dungeon
 
 class Ohno:
-    def __init__(self, ROOT_DIR):
+    """
+    The root object. Every subpart of ohno can be found through this class.
+    """
+    def __init__(self, root_dir):
         # Make sure __init__ doesn't do any crazy stuff.
         # Should always make sure initializing Ohno won't throw any exceptions.
-        self.logger = LogLady(ROOT_DIR + '/logs', \
+        self.logger = LogLady(root_dir + '/logs', \
             ('ohno', 'client', 'telnet', 'senses', 'hero', 'dungeon', \
              'ui', 'curses', 'input', 'pty'))
 
+        # Every submodule needs to be able to find other submodules, so they
+        # all take an ohno instance as the first argument.
         self.client = Client(self)
         self.senses = Senses(self)
         self.framebuffer = FrameBuffer(self)
@@ -27,11 +32,17 @@ class Ohno:
         self.hero = Hero(self)
         self.dungeon = Dungeon(self)
 
+        self.paused = self.running = None
+
     def start_resume_game(self):
+        """Starts or resumes a nethack game within the current client"""
         self.logger.ohno('Starting/resuming game..')
         self.client.start_resume_game()
 
     def loop(self):
+        """
+        The main controller of ohno. Makes sure everything happens in order.
+        """
         self.running = True
         self.paused = False
         while self.running:
@@ -45,10 +56,11 @@ class Ohno:
             self.client.send('yubnhjkl'[random.randint(0, 7)])
 
     def shutdown(self):
-        # Called from the main binary file.
+        """Stops ohno completely. Remember to .save() first!"""
         self.ui.shutdown() # Curses
         self.running = False
 
     def save(self):
+        """Tries to save the game and then runs .shutdown()"""
         self.client.send('\x1b\x1b\x1b\x1bSyq')
         self.shutdown()
