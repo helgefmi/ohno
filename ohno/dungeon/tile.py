@@ -7,6 +7,7 @@ from ohno.dungeon.monster.monster import Monster
 _tile_is_feature  = lambda t: t['glyph'] in '.}{#_<>]^|-~ '
 _tile_is_item     = lambda t: t['glyph'] in '`0*$[%)(/?!"=+\\'
 _tile_is_monster  = lambda t: t['glyph'] in (string.ascii_letters + "12345@'&;:")
+# glyph='-', color=33 is an open door
 _tile_is_walkable = lambda t: (t['glyph'] in '.}{#<>^ ') or \
                               (t['glyph'] == '-' and t['color']['fg'] == 33)
 
@@ -43,7 +44,7 @@ class Tile:
             self._walkable = True
 
             # If the appearance of the tile changes (i.e. something else
-            # has dropped, or a monster picking up the topmost item,
+            # has dropped, or a monster picking up the topmost item),
             # we'll completely remove any previous examined items,
             # since the hero should reexamine the tile anyway.
             # If it stays the same, we'll simply assume nothing has changed.
@@ -56,6 +57,8 @@ class Tile:
             self.monster = None
             if (not self.ohno.hero.appearance) or \
                self.ohno.hero.appearance != maptile:
+                # Not sure if we need this, but this seems like a good place to
+                # check if we're polymorphed.
                 self.ohno.hero.appearance = maptile
         elif _tile_is_monster(maptile):
             self._walkable = True

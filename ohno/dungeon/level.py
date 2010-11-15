@@ -21,3 +21,5 @@ class Level:
         if not self.ohno.hero.blind:
             for tile in curtile.adjacent:
                 tile.explored = True
+                if tile.feature and tile.feature.appearance['glyph'] == ' ':
+                    tile.walkable = False
