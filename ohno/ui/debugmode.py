@@ -61,17 +61,22 @@ class DebugMode(UIMode):
         hero = self.ohno.hero
         idx = self.get_cursor_idx()
         tile = self.ohno.dungeon.curlevel.tiles[idx]
-        color_str = '%d' % (tile.color['fg'] - 37)
-        if tile.color['bold']:
-            color_str += 'b'
+        color_str = '%d' % (tile.color['fg'] - 30)
+        color_str += 'b' if tile.color['bold'] else ' '
         if tile.color['reverse']:
             color_str += 'r'
-        return 'P:%2d,%2d C:%2d,%2d(%4d) G:%s C:%s' % (\
-                    hero.position[0], hero.position[1], self.cursor['y'],\
-                    self.cursor['x'], idx, tile.glyph, color_str)
+        return 'P:%2d,%2d C:%2d,%2d(%4d) T:%s/%s W:%d E:%d I:%d M:%d' % (
+            hero.position[0], hero.position[1], self.cursor['y'],
+            self.cursor['x'], idx, tile.glyph, color_str,
+            tile.walkable, tile.explored, len(tile.items),
+            tile.monster is not None
+        )
 
     def secound_botline(self):
         hero = self.ohno.hero
         return 'D:%d H:%d/%d A:%d X:%d T:%d $%d' % (\
                     hero.dlvl, hero.hp, hero.maxhp, hero.ac, hero.level,\
                     hero.turns, hero.gold)
+
+    def __str__(self):
+        return 'debug'

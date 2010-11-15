@@ -3,7 +3,7 @@ from ohno.dungeon.tile import Tile
 class Level:
     def __init__(self, ohno):
         self.ohno = ohno
-        self.tiles = [Tile(self.ohno, x) for x in xrange(21 * 80)]
+        self.tiles = [Tile(self, x) for x in xrange(21 * 80)]
 
     def update(self):
         # TODO: The way we find out if a tile has changed or not could

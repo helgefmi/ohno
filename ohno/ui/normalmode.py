@@ -27,3 +27,6 @@ class NormalMode(UIMode):
         elif input == 'd':
             from ohno.ui.debugmode import DebugMode
             return DebugMode
+
+    def __str__(self):
+        return 'normal'

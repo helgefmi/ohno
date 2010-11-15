@@ -57,8 +57,8 @@ class Curses:
                 self._scr.addch(y, x, glyph, color)
 
     def draw_botlines(self):
-        first = str(self.ohno.ui.mode).split(' ')[0].lstrip('<')
-        first += '|' + self.ohno.ui.mode.first_botline()
+        first = 'M:' + str(self.ohno.ui.mode)
+        first += ' ' + self.ohno.ui.mode.first_botline()
         secound = self.ohno.ui.mode.secound_botline()
 
         first += ' ' * (80 - len(first))
