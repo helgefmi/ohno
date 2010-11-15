@@ -43,3 +43,16 @@ class Tile:
 
         self.glyph = maptile.glyph
         self.color = maptile.color.copy()
+
+    def adjacent(self):
+        ret = []
+        dirs = (
+            (-1, -1), (-1, 0), (-1, 1),
+            ( 1, -1), ( 1, 0), ( 1, 1),
+            ( 0, -1), ( 0, 1)
+        )
+        x, y = self.idx % 80, self.idx / 80
+        for (x2, y2) in ((dir[0] + x, dir[1] + y) for dir in dirs):
+            if (0 <= x2 < 80) and (0 <= y2 < 80):
+                ret.append(self.level.tiles[y2 * 80 + x2])
+        return ret

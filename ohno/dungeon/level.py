@@ -17,3 +17,8 @@ class Level:
             if tile.glyph != maptile.glyph or \
                tile.color != maptile.color:
                 tile.set(maptile)
+        
+        curtile = self.tiles[self.ohno.hero.get_position_idx()]
+        if not self.ohno.hero.blind:
+            for tile in curtile.adjacent():
+                tile.explored = True

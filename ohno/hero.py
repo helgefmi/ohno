@@ -57,6 +57,8 @@ class Hero:
         self.level = self.xp = None
         self.turns = None
 
+        self.blind = False
+
     def update(self):
         self.ohno.logger.hero('Updating hero..')
 

@@ -55,6 +55,8 @@ class DebugMode(UIMode):
         idx = self.get_cursor_idx()
         if idx == tile.idx:
             color |= curses.A_REVERSE
+        if tile.explored and tile.glyph == ' ':
+            color |= curses.A_STANDOUT
         return color
 
     def first_botline(self):
