@@ -1,3 +1,5 @@
+import copy
+
 from ansiterm import Ansiterm
 
 class FrameBuffer:
@@ -19,7 +21,7 @@ class FrameBuffer:
         return self.ansiterm.get_string(80 * 22, 80 * 24)
 
     def get_maptiles(self):
-        return self.ansiterm.get_tiles(80, 80 * 22)
+        return [copy.deepcopy(tile.__dict__) for tile in self.ansiterm.get_tiles(80, 80 * 22)]
 
     def get_cursor(self):
         cursor = self.ansiterm.get_cursor()

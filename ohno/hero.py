@@ -40,7 +40,7 @@ class Hero:
     def __init__(self, ohno):
         self.ohno = ohno
 
-        self.glyph = '@' # Don't do much with this one yet..
+        self.appearance = None
 
         self.position = (None, None)
         self.name = None

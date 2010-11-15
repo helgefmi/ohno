@@ -48,30 +48,35 @@ class DebugMode(UIMode):
         self.cursor['y'] = min(max(0, self.cursor['y']), 20)
 
     def tile_to_glyph(self, tile):
-        return ord(tile.glyph)
+        return ord(tile.appearance['glyph'])
 
     def tile_to_color(self, tile):
-        color = self.ohno.ui.curses.convert_color(tile.color)
+        color = self.ohno.ui.curses.convert_color(tile.appearance['color'])
         idx = self.get_cursor_idx()
         if idx == tile.idx:
             color |= curses.A_REVERSE
-        if tile.explored and tile.glyph == ' ':
+        if tile.explored and tile.appearance['glyph'] == ' ':
             color |= curses.A_STANDOUT
         return color
+
+    def _appearance_to_str(self, appearance):
+        color_str = '%d' % (appearance['color']['fg'] - 30)
+        color_str += 'b' if appearance['color']['bold'] else ' '
+        return '%s,%s' % (appearance['glyph'], color_str)
 
     def first_botline(self):
         hero = self.ohno.hero
         idx = self.get_cursor_idx()
         tile = self.ohno.dungeon.curlevel.tiles[idx]
-        color_str = '%d' % (tile.color['fg'] - 30)
-        color_str += 'b' if tile.color['bold'] else ' '
-        if tile.color['reverse']:
-            color_str += 'r'
-        return 'P:%2d,%2d C:%2d,%2d(%4d) T:%s/%s W:%d E:%d I:%d M:%d' % (
-            hero.position[0], hero.position[1], self.cursor['y'],
-            self.cursor['x'], idx, tile.glyph, color_str,
-            tile.walkable, tile.explored, len(tile.items),
-            tile.monster is not None
+
+        return 'P:%2d,%2d C:%2d,%2d(%4d) W:%d E:%d F:%s I:%d M:%s A:%s' % (
+            hero.position[0], hero.position[1],
+            self.cursor['y'], self.cursor['x'], idx,
+            tile.walkable, tile.explored,
+            self._appearance_to_str(tile.feature.appearance) if tile.feature else ' ',
+            len(tile.items),
+            self._appearance_to_str(tile.monster.appearance) if tile.monster else ' ',
+            self._appearance_to_str(tile.appearance)
         )
 
     def secound_botline(self):

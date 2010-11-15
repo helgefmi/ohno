@@ -28,6 +28,7 @@ class Dungeon:
         self.curtile = self.curlevel.tiles[idx]
 
         # Make sure the cursor is right..
-        assert self.curtile.glyph == self.ohno.hero.glyph
+        assert self.curtile.appearance == self.ohno.hero.appearance
+        assert self.curtile.monster is None
         # Sanity check
         assert self.curtile.idx == idx
