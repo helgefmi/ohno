@@ -3,7 +3,7 @@ from ohno.ui.input import Input
 from ohno.ui.uimode import UIMode
 from ohno.ui.normalmode import NormalMode
 
-class UI:
+class UI(object):
     """The main controller of input/output from/to the user"""
     def __init__(self, ohno):
         self.ohno = ohno

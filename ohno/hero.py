@@ -4,7 +4,7 @@ def _parse_stat(stat):
     """'18/53' -> 15.53000"""
     return float(stat.replace('/', '.'))
 
-class Hero:
+class Hero(object):
     # /usr/games/nethack
     # Helge the Skirmisher        St:16 Dx:10 Co:20 In:10 Wi:11 Ch:8  Lawful
     # Dlvl:2  $:32 HP:14(47) Pw:6(6) AC:10 Xp:4/134 T:1732

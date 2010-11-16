@@ -1,4 +1,4 @@
-class Monster:
+class Monster(object):
     """
     Base class for a monster.
     Contains a static method to create new specific Monster instances

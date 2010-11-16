@@ -1,4 +1,4 @@
-class Feature:
+class Feature(object):
     """
     Base class for a dungeon feature.
     Contains a static method to create new specific Feature instances

@@ -12,7 +12,7 @@ from ohno.hero import Hero
 from ohno.dungeon.dungeon import Dungeon
 from ohno.ai.pathing import Pathing
 
-class Ohno:
+class Ohno(object):
     """
     The root object. Every subpart of ohno can be found through this class.
     """

@@ -1,6 +1,6 @@
 from ohno.dungeon.tile import Tile
 
-class Level:
+class Level(object):
     def __init__(self, ohno):
         self.ohno = ohno
         self.tiles = tuple(Tile(self, x) for x in xrange(21 * 80))

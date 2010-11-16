@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import curses
 
-class Curses:
+class Curses(object):
     """A class used by ohno.ui to display the current state of ohno."""
     _ansi_to_curses_colors = (
         curses.COLOR_BLACK, curses.COLOR_RED,

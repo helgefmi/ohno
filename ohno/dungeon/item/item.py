@@ -1,4 +1,4 @@
-class Item:
+class Item(object):
     """
     Base class for an item.
     Contains a static method to create new specific Item instances

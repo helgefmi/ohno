@@ -10,7 +10,7 @@ _tile_is_monster  = lambda t: t['glyph'] in (string.ascii_letters + "12345@'&;:"
 # glyph='-', color=33 is an open door
 _tile_is_walkable = lambda t: (t['glyph'] in '.}{#<>^ ')
 
-class Tile:
+class Tile(object):
     def __init__(self, level, idx):
         self.level = level
         self.ohno = self.level.ohno

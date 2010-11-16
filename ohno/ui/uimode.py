@@ -1,4 +1,4 @@
-class UIMode:
+class UIMode(object):
     """
     Meant as an abstract class with sane defaults for creating new UI modes.
     """

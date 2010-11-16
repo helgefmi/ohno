@@ -2,7 +2,7 @@ from ohno import config
 from ohno.client.telnet import Telnet
 from ohno.client.pty import Pty
 
-class Client():
+class Client(object):
     """Wraps around a specific NetHack client (telnet, /usr/bin/nethack, ..)"""
     def __init__(self, ohno):
         self.ohno = ohno

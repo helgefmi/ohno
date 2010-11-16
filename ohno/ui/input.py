@@ -1,6 +1,6 @@
 import bpython
 
-class Input:
+class Input(object):
     def __init__(self, ohno):
         self.ohno = ohno
 

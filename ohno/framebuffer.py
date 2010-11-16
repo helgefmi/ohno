@@ -3,7 +3,7 @@ import re
 
 from ansiterm import Ansiterm
 
-class FrameBuffer:
+class FrameBuffer(object):
     parse_messages = re.compile(' \s+')
     """
     Wraps around `ansiterm`, and includes nethack specific functions to make

@@ -1,6 +1,6 @@
 from ohno.dungeon.level import Level
 
-class Dungeon:
+class Dungeon(object):
     def __init__(self, ohno):
         self.ohno = ohno
         self.levels = {}
