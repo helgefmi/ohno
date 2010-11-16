@@ -3,20 +3,21 @@ from ohno.dungeon.tile import Tile
 class Level:
     def __init__(self, ohno):
         self.ohno = ohno
-        self.tiles = [Tile(self, x) for x in xrange(21 * 80)]
+        self.tiles = tuple(Tile(self, x) for x in xrange(21 * 80))
 
     def update(self):
-        # TODO: The way we find out if a tile has changed or not could
-        #       be optimized by caching the last update in some way.
-        #       Let's not do that for a while, though..
         maptiles = self.ohno.framebuffer.get_maptiles()
-        for i in xrange(21 * 80):
-            tile = self.tiles[i]
+        for (i, tile) in enumerate(self.tiles):
             maptile = maptiles[i]
             
+            # No point in updating a tile that didn't change since last time.
             if tile.appearance != maptile:
                 tile.set(maptile)
         
+        # Since empty spaces might both be walkable and not, the only way to
+        # find out (well.. at this point anyway) is to stand adjacent to the
+        # square and see if it lights up (see if the glyph changes or not).
+        # If it doesn't, we need to set the tile to not walkable.
         curtile = self.tiles[self.ohno.hero.get_position_idx()]
         if not self.ohno.hero.blind:
             for tile in curtile.adjacent:

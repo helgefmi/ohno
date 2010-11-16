@@ -12,6 +12,7 @@ class Curses:
     )
 
     def __init__(self, ohno):
+        """Initialises curses; remember to .shutdown()!"""
         self.ohno = ohno
 
         self.ohno.logger.curses('Initializing curses..')

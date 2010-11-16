@@ -5,7 +5,8 @@ import time
 import os
 import sys
 
-class Pty():
+class Pty:
+    """Runs a local nethack client from a pty"""
     def __init__(self, ohno):
         self.ohno = ohno
         self.child = None

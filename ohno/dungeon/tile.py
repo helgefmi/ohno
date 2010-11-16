@@ -65,9 +65,13 @@ class Tile:
             if (not self.monster) or self.monster.appearance != maptile:
                 self.monster = Monster.create(self, maptile)
 
+    # TODO: Meh, move this to the pathing code.
+    #       I see no other uses for this function.
     def is_open_door(self):
         return self.feature and (self.feature.appearance['glyph'] in '-|' and self.feature.appearance['color']['fg'] == 33)
 
+    # TODO: Meh, move this to the pathing code.
+    #       I see no other uses for this function.
     def can_walk_diagonally(self):
         return not self.is_open_door()
 
@@ -79,6 +83,9 @@ class Tile:
 
     @property
     def appearance(self):
+        """What does this tile look like right now?"""
+        # This could be cached, but doing it like this do work as a sanity check
+        # aswell :-)
         if self.monster is not None:
             return self.monster.appearance
         elif self.idx == self.ohno.hero.get_position_idx():
@@ -92,6 +99,9 @@ class Tile:
 
     @property
     def adjacent(self):
+        """Return the direct neighbors of this tile."""
+        # Since ohno.dungeon.level.tiles never changes (it's even a tuple), we
+        # can safely cache the result of this function the first time we run it.
         if self._adjacent is None:
             self._adjacent = []
             dirs = (

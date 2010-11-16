@@ -3,7 +3,7 @@ import time
 
 import ohno.config as config
 
-class Telnet():
+class Telnet:
     """A telnet client for ohno.client"""
     def __init__(self, ohno):
         self.ohno = ohno

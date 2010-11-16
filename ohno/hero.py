@@ -57,7 +57,10 @@ class Hero:
         self.level = self.xp = None
         self.turns = None
 
-        self.blind = False
+        self.blind = False # TODO
+
+    def get_position_idx(self):
+        return self.position[0] * 80 + self.position[1]
 
     def update(self):
         self.ohno.logger.hero('Updating hero..')
@@ -81,9 +84,6 @@ class Hero:
             setattr(self, key, value)
 
         self.ohno.logger.hero('Hero updated: %s' % self)
-
-    def get_position_idx(self):
-        return self.position[0] * 80 + self.position[1]
 
     def __str__(self):
         return '<Hero ' + ' '.join('%s=%s' %(key, getattr(self, key)) \

@@ -8,6 +8,8 @@ class FrameBuffer:
     """
     Wraps around `ansiterm`, and includes nethack specific functions to make
     life easier.
+    It's also in control of fetching from our client and updating the state of
+    ohno (see update())
     """
     def __init__(self, ohno):
         self.ohno = ohno
