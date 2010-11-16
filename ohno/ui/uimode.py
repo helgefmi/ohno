@@ -1,3 +1,5 @@
+import bpython
+
 class UIMode(object):
     """
     Meant as an abstract class with sane defaults for creating new UI modes.
@@ -19,3 +21,18 @@ class UIMode(object):
         return 'D:%d H:%d/%d A:%d X:%d T:%d $%d' % (\
                     hero.dlvl, hero.hp, hero.maxhp, hero.ac, hero.level,\
                     hero.turns, hero.gold)
+    
+    def on_input(self, input):
+        if input == '|':
+            # Opens up a bpython REPL.
+            embedded_locals = {
+                'ohno': self.ohno
+            }
+            bpython.embed(locals_=embedded_locals)
+            # Since bpython will modify our curses setup, we need to
+            # reinitialize curses (nodelay, noecho, ..).
+            self.ohno.ui.curses.start_curses()
+        elif input == 's':
+            self.ohno.save()
+        elif input == 'p':
+            self.ohno.paused = not self.ohno.paused

@@ -24,22 +24,19 @@ class DebugMode(NormalMode):
         return self.cursor['y'] * 80 + self.cursor['x']
 
     def on_input(self, input):
-        if input == '|':
-            super(DebugMode, self).on_input(input)
-        elif input == 's':
-            self.ohno.save()
-        elif input == 'p':
-            self.ohno.paused = not self.ohno.paused
+        if input in '|sp':
+            return super(DebugMode, self).on_input(input)
         elif input == 'q':
             from ohno.ui.normalmode import NormalMode
             return NormalMode
-        elif input == 'h':
+
+        if input in 'yhb':
             self.cursor['x'] -= 1
-        elif input == 'j':
+        if input in 'bnj':
             self.cursor['y'] += 1
-        elif input == 'k':
+        if input in 'yuk':
             self.cursor['y'] -= 1
-        elif input == 'l':
+        if input in 'uln':
             self.cursor['x'] += 1
 
         # Make sure the cursor are within the boundaries of the width and height

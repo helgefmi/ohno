@@ -23,4 +23,4 @@ class Level(object):
             for tile in curtile.adjacent:
                 tile.explored = True
                 if tile.feature and tile.feature.appearance['glyph'] == ' ':
-                    tile.walkable = False
+                    tile._walkable = False

@@ -42,9 +42,6 @@ class Curses(object):
         curses.endwin()
         self.ohno.logger.curses('Curses should be deinitialized now')
 
-    def refresh(self):
-        return self._scr.refresh()
-
     def getch(self):
         return self._scr.getch()
 
