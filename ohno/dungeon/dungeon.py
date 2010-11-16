@@ -27,8 +27,7 @@ class Dungeon:
         idx = self.ohno.hero.get_position_idx()
         self.curtile = self.curlevel.tiles[idx]
 
-        # Make sure the cursor is right..
+        # Some sanity checks
+        assert self.curtile.idx == idx
         assert self.curtile.appearance == self.ohno.hero.appearance
         assert self.curtile.monster is None
-        # Sanity check
-        assert self.curtile.idx == idx

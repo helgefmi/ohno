@@ -1,5 +1,4 @@
 #!/usr/bin/python
-# coding: utf-8
 
 import sys
 import os
@@ -21,13 +20,16 @@ def main():
         # If we're done looping, it means Ohno had a successful shutdown.
     except KeyboardInterrupt:
         instance.logger.ohno('Ctrl+C. Saving game')
-        instance.save() # Will call shutdown
+        instance.save() # Will call instance.shutdown()
     except Exception, e:
         instance.logger.ohno('Got an exception: "%s"' % e)
-        # Need to shut down curses before the traceback.
-        instance.save() # Will call self.shutdown()
+        # Need to shut down curses before printing traceback.
+        instance.save() # Will call instance.shutdown()
 
-        # TODO: Make a debug uimode we can use when exceptions occurs.
+        # TODO: Would be nice if the traceback could be printed while curses
+        #       is active, in debug mode, so we could inspect the tiles and use
+        #       the console _if we wanted_. Often times, the bug will probably
+        #       be known, so we don't always need a console.
         bpython_locals = {
             'ohno': instance,
             'e': e
@@ -36,4 +38,9 @@ def main():
         traceback.print_exc()
 
 if __name__ == '__main__':
+    try:
+        import psyco
+        psyco.full()
+    except ImportError:
+        pass
     main()

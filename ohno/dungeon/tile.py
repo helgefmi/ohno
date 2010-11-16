@@ -8,8 +8,7 @@ _tile_is_feature  = lambda t: t['glyph'] in '.}{#_<>]^|-~ '
 _tile_is_item     = lambda t: t['glyph'] in '`0*$[%)(/?!"=+\\'
 _tile_is_monster  = lambda t: t['glyph'] in (string.ascii_letters + "12345@'&;:")
 # glyph='-', color=33 is an open door
-_tile_is_walkable = lambda t: (t['glyph'] in '.}{#<>^ ') or \
-                              (t['glyph'] == '-' and t['color']['fg'] == 33)
+_tile_is_walkable = lambda t: (t['glyph'] in '.}{#<>^ ')
 
 class Tile:
     def __init__(self, level, idx):
@@ -36,7 +35,7 @@ class Tile:
             self.explored = self.explored or maptile['glyph'] != ' '
             if (not self.feature) or self.feature.appearance != maptile:
                 self.feature = Feature.create(self, maptile)
-                self._walkable = _tile_is_walkable(maptile)
+                self._walkable = self.is_open_door() or _tile_is_walkable(maptile)
             self.items = []
             self.monster = None
         elif _tile_is_item(maptile):
@@ -65,6 +64,12 @@ class Tile:
             self.explored = True
             if (not self.monster) or self.monster.appearance != maptile:
                 self.monster = Monster.create(self, maptile)
+
+    def is_open_door(self):
+        return self.feature and (self.feature.appearance['glyph'] in '-|' and self.feature.appearance['color']['fg'] == 33)
+
+    def can_walk_diagonally(self):
+        return not self.is_open_door()
 
     @property
     def walkable(self):
@@ -96,7 +101,7 @@ class Tile:
             )
             x, y = self.idx % 80, self.idx / 80
             for (x2, y2) in ((dir[0] + x, dir[1] + y) for dir in dirs):
-                if (0 <= x2 < 80) and (0 <= y2 < 80):
+                if (0 <= x2 < 80) and (0 <= y2 < 21):
                     self._adjacent.append(self.level.tiles[y2 * 80 + x2])
             self._adjacent = tuple(self._adjacent)
         return self._adjacent

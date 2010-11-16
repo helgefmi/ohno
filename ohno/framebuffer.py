@@ -1,8 +1,10 @@
 import copy
+import re
 
 from ansiterm import Ansiterm
 
 class FrameBuffer:
+    parse_messages = re.compile(' \s+')
     """
     Wraps around `ansiterm`, and includes nethack specific functions to make
     life easier.
@@ -21,8 +23,55 @@ class FrameBuffer:
         return self.ansiterm.get_string(80 * 22, 80 * 24)
 
     def get_maptiles(self):
+        """
+        Returns a list of the map tiles (line 2 to and incl. 22). The tiles are
+        stored as a dict. Layout of a tile: {
+            'glyph': char,
+            'color': {
+                'fg': int,
+                'bg': int,
+                'bold': bool,
+                'reverse': bool
+            }
+        }
+        """
         return [copy.deepcopy(tile.__dict__) for tile in self.ansiterm.get_tiles(80, 80 * 22)]
 
     def get_cursor(self):
         cursor = self.ansiterm.get_cursor()
         return (int(cursor['y']), int(cursor['x']))
+
+    def update(self):
+        """
+        1. Read from the client
+        2. Gather messages and press space and goto 1. if we get
+           a "--More--" message
+        3. TODO: handle menus
+        4. Update Hero (stats, position, dlvl, etc)
+        5. Update the dungeon (current level)
+        6. TODO: Send out signals for the messages, such that various submodules
+                 can listen to them and act accordingly.
+        """
+        self.ohno.logger.framebuffer('Updating framebuffer..')
+
+        messages = ''
+        while True:
+            data = self.ohno.client.receive()
+            self.feed(data)
+
+            messages += self.get_topline()
+
+            if '--More--' in messages:
+                # double space so we can split on it later
+                messages = messages.replace('--More--', '  ')
+                # There's more messages in store for us!
+                self.ohno.client.send(' ')
+            else:
+                break
+
+        messages = FrameBuffer.parse_messages.split(messages.strip(' '))
+        self.ohno.logger.framebuffer('All messages: ' + \
+                                ', '.join(map(repr, messages)))
+
+        self.ohno.hero.update()
+        self.ohno.dungeon.update()
