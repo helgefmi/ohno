@@ -1,6 +1,6 @@
 import bpython
 
-class UIMode(object):
+class BaseMode(object):
     """
     Meant as an abstract class with sane defaults for creating new UI modes.
     """

@@ -2,9 +2,9 @@ from __future__ import absolute_import
 
 import curses
 
-from ohno.ui.normalmode import NormalMode
+from ohno.ui.basemode import BaseMode
 
-class DebugMode(NormalMode):
+class DebugMode(BaseMode):
     """
     A UI mode used for debugging.
     Things ilke investigating tiles should be possible in this mode.

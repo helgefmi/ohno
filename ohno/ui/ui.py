@@ -1,5 +1,4 @@
 from ohno.ui.curses import Curses
-from ohno.ui.uimode import UIMode
 from ohno.ui.normalmode import NormalMode
 
 class UI(object):

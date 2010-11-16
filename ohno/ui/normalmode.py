@@ -1,6 +1,6 @@
-from ohno.ui.uimode import UIMode
+from ohno.ui.basemode import BaseMode
 
-class NormalMode(UIMode):
+class NormalMode(BaseMode):
     """
     The default mode. Every other mode should be accessable through this mode.
     """
