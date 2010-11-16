@@ -50,7 +50,7 @@ class Ohno(object):
             self.framebuffer.update()
             self.ui.update()
             self.pathing.search()
-            while self.paused:
+            while self.running and self.paused:
                 time.sleep(0.01)
                 self.ui.update()
 
