@@ -19,8 +19,10 @@ class Level(object):
         # square and see if it lights up (see if the glyph changes or not).
         # If it doesn't, we need to set the tile to not walkable.
         curtile = self.tiles[self.ohno.hero.get_position_idx()]
+        curtile.explored = True
         if not self.ohno.hero.blind:
             for tile in curtile.adjacent:
-                tile.explored = True
+                if not tile.items:
+                    tile.explored = True
                 if tile.feature and tile.feature.appearance['glyph'] == ' ':
                     tile._walkable = False

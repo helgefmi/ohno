@@ -22,7 +22,7 @@ def main():
         instance.logger.ohno('Ctrl+C. Saving game')
         instance.save() # Will call instance.shutdown()
     except Exception, e:
-        instance.logger.ohno('Got an exception: "%s"' % e)
+        instance.logger.ohno('Got an exception: type=%s str="%s"' % (type(e), e))
         # Need to shut down curses before printing traceback.
         instance.save() # Will call instance.shutdown()
 

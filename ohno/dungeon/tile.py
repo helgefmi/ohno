@@ -4,8 +4,8 @@ from ohno.dungeon.feature.feature import Feature
 from ohno.dungeon.item.item import Item
 from ohno.dungeon.monster.monster import Monster
 
-_tile_is_feature  = lambda t: t['glyph'] in '.}{#_<>]^|-~ '
-_tile_is_item     = lambda t: t['glyph'] in '`0*$[%)(/?!"=+\\'
+_tile_is_feature  = lambda t: t['glyph'] in '.}{#_<>]^|-~ \\'
+_tile_is_item     = lambda t: t['glyph'] in '`0*$[%)(/?!"=+'
 _tile_is_monster  = lambda t: t['glyph'] in (string.ascii_letters + "12345@'&;:")
 # glyph='-', color=33 is an open door
 _tile_is_walkable = lambda t: (t['glyph'] in '.}{#<>^ ')
@@ -32,14 +32,18 @@ class Tile(object):
         `maptile` is "newly copied" (i.e. it's safe to change)
         """
         if _tile_is_feature(maptile):
+            # Spaces ("dark part of the room") can never be set to explored
+            # unless we have been adjacent to the square yet. This logic is
+            # found in ohno.dungeon.level.
             self.explored = self.explored or maptile['glyph'] != ' '
+            # If it's the first time we're seeing the feature of this tile or if
+            # it has changed (i.e. water can spread to nearby floortiles).
             if (not self.feature) or self.feature.appearance != maptile:
                 self.feature = Feature.create(self, maptile)
                 self._walkable = self.is_open_door() or _tile_is_walkable(maptile)
             self.items = []
             self.monster = None
         elif _tile_is_item(maptile):
-            self.explored = True
             self._walkable = True
 
             # If the appearance of the tile changes (i.e. something else
@@ -49,9 +53,12 @@ class Tile(object):
             # If it stays the same, we'll simply assume nothing has changed.
             if (not self.items) or self.items[-1].appearance != maptile:
                 self.items = [Item.create(self, maptile)]
+                # Since this tile might have new information,
+                # we set explored to False. That way, it'll be easier for our AI
+                # to know this square is interesting.
+                self.explored = False
             self.monster = None
         elif self.idx == self.ohno.hero.get_position_idx():
-            self.explored = True
             self._walkable = True
             self.monster = None
             if (not self.ohno.hero.appearance) or \
@@ -60,8 +67,9 @@ class Tile(object):
                 # check if we're polymorphed.
                 self.ohno.hero.appearance = maptile
         elif _tile_is_monster(maptile):
+            # TODO: Might not be true if this is a stone giant standing on a
+            #       boulder.
             self._walkable = True
-            self.explored = True
             if (not self.monster) or self.monster.appearance != maptile:
                 self.monster = Monster.create(self, maptile)
 
@@ -78,7 +86,7 @@ class Tile(object):
     @property
     def walkable(self):
         # TODO: The following is not true if we're currently a giant or have
-        # the ability to fly.
+        # the ability to fly (i think :)..
         return self._walkable and self.appearance['glyph'] != '0'
 
     @property
@@ -115,3 +123,11 @@ class Tile(object):
                     self._adjacent.append(self.level.tiles[y2 * 80 + x2])
             self._adjacent = tuple(self._adjacent)
         return self._adjacent
+
+    def __str__(self):
+        return '<Tile idx=%d A=%s E=%d>' % (
+            self.idx, self.appearance, self.explored
+        )
+
+    def __repr__(self):
+        return str(self)

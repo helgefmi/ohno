@@ -4,13 +4,13 @@ import re
 from ansiterm import Ansiterm
 
 class FrameBuffer(object):
-    parse_messages = re.compile(' \s+')
     """
     Wraps around `ansiterm`, and includes nethack specific functions to make
     life easier.
     It's also in control of fetching from our client and updating the state of
     ohno (see update())
     """
+    split_messages = re.compile(' \s+')
     def __init__(self, ohno):
         self.ohno = ohno
         self.ansiterm = Ansiterm(24, 80)
@@ -37,7 +37,8 @@ class FrameBuffer(object):
             }
         }
         """
-        return [copy.deepcopy(tile.__dict__) for tile in self.ansiterm.get_tiles(80, 80 * 22)]
+        return [copy.deepcopy(tile.__dict__) \
+                 for tile in self.ansiterm.get_tiles(80, 80 * 22)]
 
     def get_cursor(self):
         cursor = self.ansiterm.get_cursor()
@@ -71,7 +72,7 @@ class FrameBuffer(object):
             else:
                 break
 
-        messages = FrameBuffer.parse_messages.split(messages.strip(' '))
+        messages = FrameBuffer.split_messages.split(messages.strip(' '))
         self.ohno.logger.framebuffer('All messages: ' + \
                                 ', '.join(map(repr, messages)))
 
