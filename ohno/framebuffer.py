@@ -78,3 +78,6 @@ class FrameBuffer(object):
 
         self.ohno.hero.update()
         self.ohno.dungeon.update()
+
+        for message in messages:
+            self.ohno.messages.new_message(message)

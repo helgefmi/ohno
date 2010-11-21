@@ -11,6 +11,7 @@ from ohno.ui.ui import UI
 from ohno.hero import Hero
 from ohno.dungeon.dungeon import Dungeon
 from ohno.ai.ai import AI
+from ohno.messages import Messages
 
 class Ohno(object):
     """
@@ -22,7 +23,7 @@ class Ohno(object):
         self.logger = LogLady(root_dir + '/logs', \
             ('ohno', 'client', 'telnet', 'framebuffer', 'hero', 'dungeon', \
              'ui', 'curses', 'input', 'pty', 'strategy', 'action', 'tile',
-             'level'))
+             'level', 'messages'))
 
         # Every submodule needs to be able to find other submodules, so they
         # all take an ohno instance as the first argument.
@@ -32,6 +33,7 @@ class Ohno(object):
         self.hero = Hero(self)
         self.dungeon = Dungeon(self)
         self.ai = AI(self)
+        self.messages = Messages(self)
 
         self.paused = self.running = None
         self.tick = 0
@@ -48,10 +50,14 @@ class Ohno(object):
         """
         self.running = True
         self.paused = False
+        last_action = None
         while self.running:
             self.framebuffer.update()
             self.ui.update()
             self.ai.pathing.search()
+
+            if last_action:
+                last_action.done()
 
             while self.running and self.paused:
                 time.sleep(0.01)
@@ -63,6 +69,8 @@ class Ohno(object):
             self.logger.ohno('Got action: %r (%r)!' % (action, command))
             self.client.send(command)
             self.tick += 1
+
+            last_action = action
 
     def shutdown(self):
         """Shuts ohno down without saving. You should probably use .save() instead."""

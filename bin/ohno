@@ -13,8 +13,8 @@ def main():
     sys.path.extend([ROOT_DIR, os.path.join(ROOT_DIR, 'lib', 'loglady'), os.path.join(ROOT_DIR, 'lib', 'ansiterm')])
     import ohno.ohno
 
+    instance = ohno.ohno.Ohno(ROOT_DIR)
     try:
-        instance = ohno.ohno.Ohno(ROOT_DIR)
         instance.start_resume_game()
         instance.loop()
         # If we're done looping, it means Ohno had a successful shutdown.
