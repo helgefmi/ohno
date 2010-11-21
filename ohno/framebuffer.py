@@ -80,4 +80,6 @@ class FrameBuffer(object):
         self.ohno.dungeon.update()
 
         for message in messages:
+            if message == '':
+                continue
             self.ohno.messages.new_message(message)

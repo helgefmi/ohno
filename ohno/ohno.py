@@ -36,6 +36,7 @@ class Ohno(object):
         self.messages = Messages(self)
 
         self.paused = self.running = None
+        self.last_action = None
         self.tick = 0
 
     def start_resume_game(self):
@@ -50,14 +51,13 @@ class Ohno(object):
         """
         self.running = True
         self.paused = False
-        last_action = None
         while self.running:
             self.framebuffer.update()
             self.ui.update()
             self.ai.pathing.search()
 
-            if last_action:
-                last_action.done()
+            if self.last_action:
+                self.last_action.done()
 
             while self.running and self.paused:
                 time.sleep(0.01)
@@ -70,7 +70,7 @@ class Ohno(object):
             self.client.send(command)
             self.tick += 1
 
-            last_action = action
+            self.last_action = action
 
     def shutdown(self):
         """Shuts ohno down without saving. You should probably use .save() instead."""
