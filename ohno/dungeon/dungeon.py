@@ -27,6 +27,8 @@ class Dungeon(object):
         idx = self.ohno.hero.get_position_idx()
         self.curtile = self.curlevel.tiles[idx]
 
+        self.ohno.logger.dungeon('Current tile is %r' % self.curtile)
+
         # Some sanity checks
         assert self.curtile.idx == idx
         assert self.curtile.appearance == self.ohno.hero.appearance

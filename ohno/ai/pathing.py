@@ -4,7 +4,7 @@ from operator import itemgetter
 class Pathing(object):
     def __init__(self, ohno):
         self.ohno = ohno
-        self.tick = None
+        self.previous = self.tick = None
 
     def is_uptodate(self):
         # Have we called search() in this particular tick?
@@ -37,10 +37,12 @@ class Pathing(object):
         inf = float('inf')
 
         source = self.ohno.dungeon.curtile
-        distances = [inf] * 21 * 80
-        self.prev = [None] * 21 * 80
+        assert source.walkable
 
-        distances[source.idx] = 0
+        self.dists = [inf] * 21 * 80
+        self.previous = [None] * 21 * 80
+
+        self.dists[source.idx] = 0
         graph = [(0, source)]
 
         while graph:
@@ -49,12 +51,14 @@ class Pathing(object):
             # Stop when we reach an unreachable tile
             if cur_dist == inf:
                 break
+
+            # We can search for an unwalkable tile, but then we can't walk further.
+            if not current.walkable:
+                continue
+
             for neighbor in current.adjacent:
                 # Investigate each tile once
-                if self.prev[neighbor.idx]:
-                    continue
-                # Can't walk through walls
-                if not neighbor.walkable:
+                if self.previous[neighbor.idx]:
                     continue
                 # Don't search past two unexplored tiles in a direction
                 if not current.explored and not neighbor.explored:
@@ -73,17 +77,20 @@ class Pathing(object):
                 # bit better in corridors.
                 if abs(neighbor.idx - current.idx) in (1, 80):
                     weight -= 0.95
-                distances[neighbor.idx] = cur_dist + weight
-                self.prev[neighbor.idx] = current
-                heapq.heappush(graph, (distances[neighbor.idx], neighbor))
+                self.dists[neighbor.idx] = cur_dist + weight
+                self.previous[neighbor.idx] = current
+                heapq.heappush(graph, (self.dists[neighbor.idx], neighbor))
 
-        sorted_indices = sorted(enumerate(distances), key=itemgetter(1))
+        # Sort `self.dists` such that the first index has the nearest distance
+        sorted_indices = sorted(enumerate(self.dists), key=itemgetter(1))
+        # Translate sorted_indices into Tile instances
         self.tiles = [self.ohno.dungeon.curlevel.tiles[idx] for idx, dist in sorted_indices if dist != inf]
 
     def get_path(self, tile):
+        # Returns an iterator for the path to a particular tile in order.
         assert self.is_uptodate()
         path = []
         while tile != self.ohno.dungeon.curtile:
             path.append(tile)
-            tile = self.prev[tile.idx]
+            tile = self.previous[tile.idx]
         return reversed(path)

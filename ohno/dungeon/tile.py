@@ -1,13 +1,16 @@
 import string
 
-from ohno.dungeon.feature.feature import Feature
 from ohno.dungeon.item.item import Item
 from ohno.dungeon.monster.monster import Monster
+
+from ohno.dungeon.feature import feature
+from ohno.dungeon.feature.door import Door
+
 
 _tile_is_feature  = lambda t: t['glyph'] in '.}{#_<>]^|-~ \\'
 _tile_is_item     = lambda t: t['glyph'] in '`0*$[%)(/?!"=+'
 _tile_is_monster  = lambda t: t['glyph'] in (string.ascii_letters + "12345@'&;:")
-# glyph='-', color=33 is an open door
+# doors are handled in walkable()
 _tile_is_walkable = lambda t: (t['glyph'] in '.}{#<>^ ')
 
 class Tile(object):
@@ -39,7 +42,7 @@ class Tile(object):
             # If it's the first time we're seeing the feature of this tile or if
             # it has changed (i.e. water can spread to nearby floortiles).
             if (not self.feature) or self.feature.appearance != maptile:
-                self.feature = Feature.create(self, maptile)
+                self.feature = feature.create(self, maptile)
                 self._walkable = self.is_open_door() or _tile_is_walkable(maptile)
             self.items = []
             self.set_monster(None)
@@ -81,6 +84,15 @@ class Tile(object):
     #       I see no other uses for this function.
     def can_walk_diagonally(self):
         return not self.is_open_door()
+
+    # Methods for simpler API to ohno.ai.pathing.search_where
+    @property
+    def has_monster(self):
+        return self.monster is not None
+
+    @property
+    def has_closed_door(self):
+        return isinstance(self.feature, Door) and self.feature.closed
 
     @property
     def walkable(self):
@@ -130,8 +142,8 @@ class Tile(object):
         self.level.monsters.append(monster)
 
     def __str__(self):
-        return '<Tile idx=%d A=%s E=%d>' % (
-            self.idx, self.appearance, self.explored
+        return '<Tile idx=%d A=%s E=%d W=%d>' % (
+            self.idx, self.appearance, self.explored, self.walkable
         )
 
     def __repr__(self):

@@ -2,13 +2,13 @@ from ohno.action.baseaction import BaseAction
 from ohno import util
 
 class Walk(BaseAction):
-    def __init__(self, ohno, to_tile):
+    def __init__(self, ohno, tile):
         super(Walk, self).__init__(ohno)
-        self.to_tile = to_tile
+        self.tile = tile
 
     def get_command(self):
-        self.ohno.logger.action('[walk] Getting command to walk to %r..' % self.to_tile)
-        path = self.ohno.ai.pathing.get_path(self.to_tile)
+        self.ohno.logger.action('[walk] Getting command to walk to %r..' % self.tile)
+        path = self.ohno.ai.pathing.get_path(self.tile)
         next = path.next()
         self.ohno.logger.action('[walk] next tile is %r' % next)
         delta = next.idx - self.ohno.dungeon.curtile.idx

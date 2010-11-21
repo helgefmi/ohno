@@ -21,7 +21,7 @@ class Ohno(object):
         # Should always make sure initializing Ohno won't throw any exceptions.
         self.logger = LogLady(root_dir + '/logs', \
             ('ohno', 'client', 'telnet', 'framebuffer', 'hero', 'dungeon', \
-             'ui', 'curses', 'input', 'pty', 'strategy', 'action'))
+             'ui', 'curses', 'input', 'pty', 'strategy', 'action', 'tile'))
 
         # Every submodule needs to be able to find other submodules, so they
         # all take an ohno instance as the first argument.

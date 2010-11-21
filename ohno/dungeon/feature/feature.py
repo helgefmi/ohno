@@ -1,15 +1,9 @@
-class Feature(object):
-    """
-    Base class for a dungeon feature.
-    Contains a static method to create new specific Feature instances
-    (i.e. Altar, Fountain, Floor), and some common methods for all the features.
-    """
+from ohno.dungeon.feature.basefeature import BaseFeature
+from ohno.dungeon.feature.door import Door
 
-    def __init__(self, ohno, maptile):
-        self.ohno = ohno
-        self.appearance = maptile
+def create(ohno, maptile):
+    """Checks `maptile` for which feature to create"""
+    if maptile['glyph'] in '-|]' and maptile['color']['fg'] == 33:
+        return Door(ohno, maptile)
 
-    @staticmethod
-    def create(ohno, maptile):
-        """Checks `maptile` for which feature to create"""
-        return Feature(ohno, maptile)
+    return BaseFeature(ohno, maptile)
