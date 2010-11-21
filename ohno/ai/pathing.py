@@ -1,8 +1,15 @@
 import heapq
+from operator import itemgetter
 
 class Pathing(object):
     def __init__(self, ohno):
         self.ohno = ohno
+        self.tick = None
+
+    def is_uptodate(self):
+        # Have we called search() in this particular tick?
+        # Mostly used as a sanity check.
+        return self.tick == self.ohno.tick
 
     def search_where(self, **kwargs):
         def predicate(tile):
@@ -13,22 +20,31 @@ class Pathing(object):
                 if value != attr:
                     return False
             return True
-        return self.search(predicate)
+        return self._search(predicate)
 
-    def search(self, predicate):
+    def _search(self, predicate):
+        assert self.is_uptodate()
+        for tile in self.tiles:
+            if predicate(tile):
+                yield tile
+
+    def search(self):
+        # Make sure we don't call this function more than once each tick, since
+        # the pathing obviously can't change untill we do an action.
+        assert self.tick != self.ohno.tick
+        self.tick = self.ohno.tick
+
         inf = float('inf')
 
         source = self.ohno.dungeon.curtile
-        self.dist = [inf] * 21 * 80
+        distances = [inf] * 21 * 80
         self.prev = [None] * 21 * 80
 
-        self.dist[source.idx] = 0
-        self.graph = [(0, source)]
+        distances[source.idx] = 0
+        graph = [(0, source)]
 
-        while self.graph:
-            cur_dist, current = heapq.heappop(self.graph)
-            if current != source and predicate(current):
-                yield current
+        while graph:
+            cur_dist, current = heapq.heappop(graph)
 
             # Stop when we reach an unreachable tile
             if cur_dist == inf:
@@ -40,7 +56,7 @@ class Pathing(object):
                 # Can't walk through walls
                 if not neighbor.walkable:
                     continue
-                # Don't search past two unexplored tiles in a row
+                # Don't search past two unexplored tiles in a direction
                 if not current.explored and not neighbor.explored:
                     continue
                 # TODO: Remove can_walk_diagonally and is_open_door and put the
@@ -57,11 +73,15 @@ class Pathing(object):
                 # bit better in corridors.
                 if abs(neighbor.idx - current.idx) in (1, 80):
                     weight -= 0.95
-                self.dist[neighbor.idx] = cur_dist + weight
+                distances[neighbor.idx] = cur_dist + weight
                 self.prev[neighbor.idx] = current
-                heapq.heappush(self.graph, (self.dist[neighbor.idx], neighbor))
+                heapq.heappush(graph, (distances[neighbor.idx], neighbor))
+
+        sorted_indices = sorted(enumerate(distances), key=itemgetter(1))
+        self.tiles = [self.ohno.dungeon.curlevel.tiles[idx] for idx, dist in sorted_indices if dist != inf]
 
     def get_path(self, tile):
+        assert self.is_uptodate()
         path = []
         while tile != self.ohno.dungeon.curtile:
             path.append(tile)

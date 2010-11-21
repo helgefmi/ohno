@@ -42,7 +42,7 @@ class Tile(object):
                 self.feature = Feature.create(self, maptile)
                 self._walkable = self.is_open_door() or _tile_is_walkable(maptile)
             self.items = []
-            self.monster = None
+            self.set_monster(None)
         elif _tile_is_item(maptile):
             self._walkable = True
 
@@ -57,10 +57,9 @@ class Tile(object):
                 # we set explored to False. That way, it'll be easier for our AI
                 # to know this square is interesting.
                 self.explored = False
-            self.monster = None
         elif self.idx == self.ohno.hero.get_position_idx():
             self._walkable = True
-            self.monster = None
+            self.set_monster(None)
             if (not self.ohno.hero.appearance) or \
                self.ohno.hero.appearance != maptile:
                 # Not sure if we need this, but this seems like a good place to
@@ -71,7 +70,7 @@ class Tile(object):
             #       boulder.
             self._walkable = True
             if (not self.monster) or self.monster.appearance != maptile:
-                self.monster = Monster.create(self, maptile)
+                self.set_monster(Monster.create(self, maptile))
 
     # TODO: Meh, move this to the pathing code.
     #       I see no other uses for this function.
@@ -123,6 +122,12 @@ class Tile(object):
                     self._adjacent.append(self.level.tiles[y2 * 80 + x2])
             self._adjacent = tuple(self._adjacent)
         return self._adjacent
+
+    def set_monster(self, monster):
+        if self.monster is not None:
+            self.level.monsters.remove(self.monster)
+        self.monster = monster
+        self.level.monsters.append(monster)
 
     def __str__(self):
         return '<Tile idx=%d A=%s E=%d>' % (

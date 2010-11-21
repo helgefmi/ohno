@@ -33,6 +33,7 @@ class Ohno(object):
         self.ai = AI(self)
 
         self.paused = self.running = None
+        self.tick = 0
 
     def start_resume_game(self):
         """Starts or resumes a nethack game within the current client."""
@@ -49,6 +50,8 @@ class Ohno(object):
         while self.running:
             self.framebuffer.update()
             self.ui.update()
+            self.ai.pathing.search()
+
             while self.running and self.paused:
                 time.sleep(0.01)
                 self.ui.update()
@@ -58,7 +61,7 @@ class Ohno(object):
             command = action.get_command()
             self.logger.ohno('Got action: %r (%r)!' % (action, command))
             self.client.send(command)
-            time.sleep(0.3)
+            self.tick += 1
 
     def shutdown(self):
         """Shuts ohno down without saving. You should probably use .save() instead."""
