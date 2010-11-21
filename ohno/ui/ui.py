@@ -1,3 +1,5 @@
+import bpython
+
 from ohno.ui.curses import Curses
 from ohno.ui.normalmode import NormalMode
 
@@ -25,3 +27,14 @@ class UI(object):
             ret = self.ohno.ui.mode.on_input(input)
             if ret is not None:
                 self.set_mode(ret(self.ohno))
+
+    def open_console(self, **kwargs):
+        # Opens up a bpython REPL.
+        embedded_locals = {
+            'ohno': self.ohno
+        }
+        embedded_locals.update(kwargs)
+        bpython.embed(locals_=embedded_locals)
+        # Since bpython will modify our curses setup, we need to
+        # reinitialize curses (nodelay, noecho, ..).
+        self.ohno.ui.curses.start_curses()

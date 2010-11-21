@@ -25,6 +25,7 @@ class Tile(object):
         self.feature = None
         self.items = []
         self.monster = None
+        self.has_hero = None
 
         self._adjacent = None
 
@@ -45,9 +46,11 @@ class Tile(object):
                 self.feature = feature.create(self, maptile)
                 self._walkable = self.is_open_door() or _tile_is_walkable(maptile)
             self.items = []
+            self.has_hero = False
             self.set_monster(None)
         elif _tile_is_item(maptile):
             self._walkable = True
+            self.has_hero = False
 
             # If the appearance of the tile changes (i.e. something else
             # has dropped, or a monster picking up the topmost item),
@@ -61,16 +64,20 @@ class Tile(object):
                 # to know this square is interesting.
                 self.explored = False
         elif self.idx == self.ohno.hero.get_position_idx():
+            self.ohno.logger.tile('Updating tile with %s: %r' % (self.ohno.hero, self))
             self._walkable = True
+            self.has_hero = True
             self.set_monster(None)
             if (not self.ohno.hero.appearance) or \
                self.ohno.hero.appearance != maptile:
                 # Not sure if we need this, but this seems like a good place to
                 # check if we're polymorphed.
                 self.ohno.hero.appearance = maptile
+            self.ohno.logger.tile('Updated tile with %s: %r' % (self.ohno.hero, self))
         elif _tile_is_monster(maptile):
             # TODO: Might not be true if this is a stone giant standing on a
             #       boulder.
+            self.has_hero = False
             self._walkable = True
             if (not self.monster) or self.monster.appearance != maptile:
                 self.set_monster(Monster.create(self, maptile))
@@ -85,20 +92,13 @@ class Tile(object):
     def can_walk_diagonally(self):
         return not self.is_open_door()
 
-    # Methods for simpler API to ohno.ai.pathing.search_where
-    @property
-    def has_monster(self):
-        return self.monster is not None
-
-    @property
-    def has_closed_door(self):
-        return isinstance(self.feature, Door) and self.feature.closed
-
     @property
     def walkable(self):
         # TODO: The following is not true if we're currently a giant or have
         # the ability to fly (i think :)..
-        return self._walkable and self.appearance['glyph'] != '0'
+        # This might be called before the tile is initialized, so make sure we
+        # consider the case where appearance is None
+        return self.appearance and self._walkable and self.appearance['glyph'] != '0'
 
     @property
     def appearance(self):
@@ -107,7 +107,7 @@ class Tile(object):
         # aswell :-)
         if self.monster is not None:
             return self.monster.appearance
-        elif self.idx == self.ohno.hero.get_position_idx():
+        elif self.has_hero:
             return self.ohno.hero.appearance
         elif self.items:
             return self.items[-1].appearance
@@ -141,9 +141,25 @@ class Tile(object):
         self.monster = monster
         self.level.monsters.append(monster)
 
+    # Methods for simpler API to ohno.ai.pathing.search_where
+    @property
+    def has_monster(self):
+        return self.monster is not None
+
+    @property
+    def has_closed_door(self):
+        return isinstance(self.feature, Door) and self.feature.closed
+
+    @property
+    def feature_name(self):
+        return self.feature.__class__.__name__ if self.feature else 'Unknown'
+
+    def feature_is_a(self, class_name):
+        return self.feature_name == class_name
+
     def __str__(self):
         return '<Tile idx=%d A=%s E=%d W=%d>' % (
-            self.idx, self.appearance, self.explored, self.walkable
+            self.idx, self.appearance, self.explored, int(self.walkable or 0)
         )
 
     def __repr__(self):

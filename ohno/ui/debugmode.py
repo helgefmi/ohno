@@ -24,8 +24,11 @@ class DebugMode(BaseMode):
         return self.cursor['y'] * 80 + self.cursor['x']
 
     def on_input(self, input):
-        if input in '|sp':
+        if input in 'sp':
             return super(DebugMode, self).on_input(input)
+        elif input == '|':
+            tile = self.ohno.dungeon.curlevel.tiles[self.get_cursor_idx()]
+            self.ohno.ui.open_console(tile=tile)
         elif input == 'q':
             from ohno.ui.normalmode import NormalMode
             return NormalMode
