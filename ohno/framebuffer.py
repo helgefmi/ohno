@@ -75,11 +75,5 @@ class FrameBuffer(object):
         messages = FrameBuffer.split_messages.split(messages.strip(' '))
         self.ohno.logger.framebuffer('All messages: ' + \
                                 ', '.join(map(repr, messages)))
-
-        self.ohno.hero.update()
-        self.ohno.dungeon.update()
-
-        for message in messages:
-            if message == '':
-                continue
-            self.ohno.messages.new_message(message)
+        
+        return messages

@@ -52,10 +52,32 @@ class Ohno(object):
         self.running = True
         self.paused = False
         while self.running:
-            self.framebuffer.update()
+            # First, take input from the client and update our framebuffer.
+            # This should always leave the client in a state where _doing stuff_
+            # is possioble (that is, not in a menu, no --More-- messages, etc.)
+            # Any messages sent to us is stored in `messages` temporarily,
+            # because we want to update the hero and dungeon before sending them
+            # to ohno.messages.
+            messages = self.framebuffer.update()
+            # Updates stats like hp, ac, hunger, score, dlvl
+            self.hero.update()
+            # Creates new level and/or updates the level with what we got from
+            # framebuffer.
+            self.dungeon.update()
+
+            # Start parsing the messages
+            for message in filter(len, messages):
+                self.messages.new_message(message)
+
+            # Update the user display and/or take input from the user.
             self.ui.update()
+            # Search the level once. This is then cached for fast queries by the
+            # AI later on.
             self.ai.pathing.search()
 
+            # Some actiosn might want to do something depending on the outcome
+            # of an action (example: what happened when I read the unidentified
+            # scroll?)
             if self.last_action:
                 self.last_action.done()
 
@@ -63,11 +85,15 @@ class Ohno(object):
                 time.sleep(0.01)
                 self.ui.update()
 
+            # Ask the AI for the next action and send the key strokes needed for
+            # that action.
             self.logger.ohno('Getting the next action from `strategy`..')
             action = self.ai.strategy.next_action()
             command = action.get_command()
             self.logger.ohno('Got action: %r (%r)!' % (action, command))
             self.client.send(command)
+
+            # Internal tick used by ai.pathing as a sanity check.
             self.tick += 1
 
             self.last_action = action
