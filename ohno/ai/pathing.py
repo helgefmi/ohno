@@ -43,14 +43,18 @@ class Pathing(object):
         self.previous = [None] * 21 * 80
 
         self.dists[source.idx] = 0
+        self.previous[source.idx] = source
         graph = [(0, source)]
 
+        self.tiles = []
         while graph:
             cur_dist, current = heapq.heappop(graph)
 
             # Stop when we reach an unreachable tile
             if cur_dist == inf:
                 break
+
+            self.tiles.append(current)
 
             # We can search for an unwalkable tile, but then we can't walk further.
             if not current.walkable:
@@ -76,15 +80,12 @@ class Pathing(object):
                 # horizontal movement, because this behaviour explores a little
                 # bit better in corridors.
                 if abs(neighbor.idx - current.idx) in (1, 80):
-                    weight -= 0.95
+                    weight -= 0.01
                 self.dists[neighbor.idx] = cur_dist + weight
                 self.previous[neighbor.idx] = current
                 heapq.heappush(graph, (self.dists[neighbor.idx], neighbor))
 
-        # Sort `self.dists` such that the first index has the nearest distance
-        sorted_indices = sorted(enumerate(self.dists), key=itemgetter(1))
-        # Translate sorted_indices into Tile instances
-        self.tiles = [self.ohno.dungeon.curlevel.tiles[idx] for idx, dist in sorted_indices if dist != inf]
+        assert self.tiles[0] == source
 
     def get_path(self, tile):
         # Returns an iterator for the path to a particular tile in order.
