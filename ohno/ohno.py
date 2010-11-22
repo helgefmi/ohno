@@ -71,13 +71,13 @@ class Ohno(object):
 
             # Update the user display and/or take input from the user.
             self.ui.update()
-            # Search the level once. This is then cached for fast queries by the
+            # Search the level once. This is then cached for fast queries for the
             # AI later on.
             self.ai.pathing.search()
 
-            # Some actiosn might want to do something depending on the outcome
+            # Some actions might want to do something depending on the outcome
             # of an action (example: what happened when I read the unidentified
-            # scroll?)
+            # scroll?). This could be used for sanity checks aswell.
             if self.last_action:
                 self.last_action.done()
 
