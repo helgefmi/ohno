@@ -32,7 +32,7 @@ class Level(object):
             for tile in curtile.adjacent():
                 if not tile.items:
                     tile.explored = True
-                if tile.appearance['glyph'] == ' ':
+                if tile.appearance.glyph == ' ':
                     tile._walkable = False
 
     def explored_progress(self):

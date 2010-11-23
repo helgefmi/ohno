@@ -4,11 +4,11 @@ class BaseMode(object):
     """
     def tile_to_glyph(self, tile):
         """Takes a tile and outputs a character."""
-        return ord(tile.appearance['glyph'])
+        return ord(tile.appearance.glyph)
 
     def tile_to_color(self, tile):
         """Takes a tile and outputs a curses color code."""
-        return self.ohno.ui.curses.convert_color(tile.appearance['color'])
+        return self.ohno.ui.curses.convert_color(tile.appearance)
 
     def first_botline(self):
         hero = self.ohno.hero

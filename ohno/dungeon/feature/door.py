@@ -7,4 +7,4 @@ class Door(BaseFeature):
 
     @property
     def closed(self):
-        return self.appearance['glyph'] == ']'
+        return self.appearance.glyph == ']'

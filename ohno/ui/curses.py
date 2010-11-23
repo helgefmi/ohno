@@ -66,8 +66,8 @@ class Curses(object):
         self._scr.addstr(22, 0, secound)
 
     @classmethod
-    def convert_color(cls, color):
-        fg = color['fg'] - 30
+    def convert_color(cls, appearance):
+        fg = appearance.fg - 30
         return curses.color_pair(cls._ansi_to_curses_colors[fg])
     
     @classmethod

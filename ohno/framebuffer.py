@@ -1,7 +1,11 @@
+from __future__ import absolute_import
+
 import copy
 import re
 
 from ansiterm import Ansiterm
+
+from ohno.appearance import Appearance
 
 class FrameBuffer(object):
     """
@@ -37,7 +41,7 @@ class FrameBuffer(object):
             }
         }
         """
-        return [copy.deepcopy(tile.__dict__) \
+        return [Appearance(tile) \
                  for tile in self.ansiterm.get_tiles(80, 80 * 22)]
 
     def get_cursor(self):

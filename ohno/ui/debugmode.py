@@ -48,21 +48,21 @@ class DebugMode(BaseMode):
         self.cursor['y'] = min(max(0, self.cursor['y']), 20)
 
     def tile_to_glyph(self, tile):
-        return ord(tile.appearance['glyph'])
+        return ord(tile.appearance.glyph)
 
     def tile_to_color(self, tile):
-        color = self.ohno.ui.curses.convert_color(tile.appearance['color'])
+        color = self.ohno.ui.curses.convert_color(tile.appearance)
         idx = self.get_cursor_idx()
         if idx == tile.idx:
             color |= curses.A_REVERSE
-        if tile.explored and tile.appearance['glyph'] == ' ':
+        if tile.explored and tile.appearance.glyph == ' ':
             color |= curses.A_STANDOUT
         return color
 
     def _appearance_to_str(self, appearance):
-        color_str = '%d' % (appearance['color']['fg'] - 30)
-        color_str += 'b' if appearance['color']['bold'] else ' '
-        return '%s,%s' % (appearance['glyph'], color_str)
+        color_str = '%d' % (appearance.fg - 30)
+        color_str += 'b' if appearance.bold else ' '
+        return '%s,%s' % (appearance.glyph, color_str)
 
     def first_botline(self):
         hero = self.ohno.hero

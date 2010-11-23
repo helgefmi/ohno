@@ -18,9 +18,10 @@ class Explore(BaseStrategy):
         assert tile.walkable == False
         assert tile.feature_is_a('Door')
 
-        if self.explored_progress >= 100:
-            self.ohno.logger.strategy('[explore] I\'ve explored enough, won\'t open door')
-            return
+        # TODO:
+        #if self.explored_progress >= 100:
+        #    self.ohno.logger.strategy('[explore] I\'ve explored enough, won\'t open door')
+        #    return
 
         self.ohno.logger.strategy('[explore] found closed door at %r' % tile)
         if tile in self.ohno.dungeon.curtile.adjacent():

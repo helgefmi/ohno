@@ -6,4 +6,4 @@ class Staircase(BaseFeature):
 
     @property
     def direction(self):
-        return 'down' if self.appearance['glyph'] == '>' else 'up'
+        return 'down' if self.appearance.glyph == '>' else 'up'

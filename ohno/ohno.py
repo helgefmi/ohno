@@ -77,10 +77,6 @@ class Ohno(object):
             if self.last_action:
                 self.last_action.done()
 
-            while self.running and self.paused:
-                time.sleep(0.01)
-                self.ui.update()
-
             # Ask the AI for the next action and send the key strokes needed for
             # that action.
             self.logger.ohno('Getting the next action from `strategy`..')
@@ -88,6 +84,10 @@ class Ohno(object):
             command = action.get_command()
             self.logger.ohno('Got action: %r (%r)!' % (action, command))
             self.client.send(command)
+
+            while self.running and self.paused:
+                time.sleep(0.01)
+                self.ui.update()
 
             # Internal tick used by ai.pathing as a sanity check.
             self.tick += 1
