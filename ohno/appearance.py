@@ -1,4 +1,8 @@
 class Appearance(object):
+    """
+    Represents the glyph, color and boldness of a tile on the framebuffer.
+    This is an immutable class.
+    """
     def __init__(self, fbtile):
         self._glyph = fbtile.glyph
         self._fg = fbtile.color['fg']
@@ -15,7 +19,12 @@ class Appearance(object):
         return not (self == other)
 
     def __str__(self):
-        return '%s,%d,%s' % (self.glyph, self.fg, self.bold)
+        ret = self.glyph
+        if self.fg != 37:
+            ret += ',%d' % (self.fg - 30)
+        if self.bold:
+            ret += 'b'
+        return ret
 
     def __hash__(self):
         return str(self).__hash__()

@@ -77,8 +77,7 @@ class Tile(object):
             self._walkable = True
             self.has_hero = True
             self.set_monster(None)
-            if (not self.ohno.hero.appearance) or \
-               self.ohno.hero.appearance != appearance:
+            if self.ohno.hero.appearance != appearance:
                 self.ohno.logger.tile('New hero! A was %s, now is %s' % (
                     self.ohno.hero.appearance, appearance
                 ))

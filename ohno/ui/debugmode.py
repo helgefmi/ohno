@@ -59,11 +59,6 @@ class DebugMode(BaseMode):
             color |= curses.A_STANDOUT
         return color
 
-    def _appearance_to_str(self, appearance):
-        color_str = '%d' % (appearance.fg - 30)
-        color_str += 'b' if appearance.bold else ' '
-        return '%s,%s' % (appearance.glyph, color_str)
-
     def first_botline(self):
         hero = self.ohno.hero
         idx = self.get_cursor_idx()
@@ -73,10 +68,10 @@ class DebugMode(BaseMode):
             hero.position[0], hero.position[1],
             self.cursor['y'], self.cursor['x'], idx,
             tile.walkable, tile.explored,
-            self._appearance_to_str(tile.feature.appearance) if tile.feature else ' ',
+            tile.feature.appearance if tile.feature else ' ',
             len(tile.items),
-            self._appearance_to_str(tile.monster.appearance) if tile.monster else ' ',
-            self._appearance_to_str(tile.appearance),
+            tile.monster.appearance if tile.monster else ' ',
+            tile.appearance,
             tile.searched,
             tile.distance_from_hero(), 1 if tile.reachable else 0
         )
