@@ -4,11 +4,11 @@ from ohno.action.melee import Melee
 
 class Battle(BaseStrategy):
     def get_action(self):
-        monsters = self.ohno.ai.pathing.search_where(has_monster=True) 
+        monsters = self.ohno.ai.pathing.search(has_monster=True) 
         try:
             tile = monsters.next()
             self.ohno.logger.strategy('[battle] Found monster at: %r' % tile)
-            if tile in self.ohno.dungeon.curtile.adjacent:
+            if tile in self.ohno.dungeon.curtile.adjacent():
                 self.ohno.logger.strategy('[battle] Monster is adjacent; attacking!')
                 return Melee(self.ohno, tile=tile)
             else:

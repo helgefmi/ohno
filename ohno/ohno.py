@@ -54,7 +54,7 @@ class Ohno(object):
         while self.running:
             # First, take input from the client and update our framebuffer.
             # This should always leave the client in a state where _doing stuff_
-            # is possioble (that is, not in a menu, no --More-- messages, etc.)
+            # is possible (that is, not in a menu, no --More-- messages, etc.)
             # Any messages sent to us is stored in `messages` temporarily,
             # because we want to update the hero and dungeon before sending them
             # to ohno.messages.
@@ -71,9 +71,6 @@ class Ohno(object):
 
             # Update the user display and/or take input from the user.
             self.ui.update()
-            # Search the level once. This is then cached for fast queries for the
-            # AI later on.
-            self.ai.pathing.search()
 
             # Some actions might want to do something depending on the outcome
             # of an action (example: what happened when I read the unidentified

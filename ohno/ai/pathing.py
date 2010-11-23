@@ -1,6 +1,8 @@
 import heapq
 from operator import itemgetter
 
+from queryable import queryable
+
 class Pathing(object):
     def __init__(self, ohno):
         self.ohno = ohno
@@ -11,24 +13,13 @@ class Pathing(object):
         # Mostly used as a sanity check.
         return self.tick == self.ohno.tick
 
-    def search_where(self, **kwargs):
-        def predicate(tile):
-            for key, value in kwargs.iteritems():
-                attr = getattr(tile, key)
-                if callable(attr):
-                    attr = attr()
-                if value != attr:
-                    return False
-            return True
-        return self._search(predicate)
-
-    def _search(self, predicate):
-        assert self.is_uptodate()
-        for tile in self.tiles:
-            if predicate(tile):
-                yield tile
-
+    @queryable
     def search(self):
+        if not self.is_uptodate():
+            self._search()
+        return self.tiles
+
+    def _search(self):
         # Make sure we don't call this function more than once each tick, since
         # the pathing obviously can't change untill we do an action.
         assert self.tick != self.ohno.tick
@@ -60,7 +51,7 @@ class Pathing(object):
             if not current.walkable:
                 continue
 
-            for neighbor in current.adjacent:
+            for neighbor in current.adjacent():
                 # Investigate each tile once
                 if self.previous[neighbor.idx]:
                     continue

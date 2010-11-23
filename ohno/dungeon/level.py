@@ -29,7 +29,7 @@ class Level(object):
         # square and see if it lights up (see if the glyph changes or not).
         # If it doesn't, we need to set the tile to not walkable.
         if not self.ohno.hero.blind:
-            for tile in curtile.adjacent:
+            for tile in curtile.adjacent():
                 if not tile.items:
                     tile.explored = True
                 if tile.appearance['glyph'] == ' ':
@@ -37,19 +37,18 @@ class Level(object):
 
     def explored_progress(self):
         """
-        How much of a level do we think is explored?
-        Returns a percentage between 0 to 100 where 100% is "I think I've
+        How much of the level do we think is explored?
+        Returns a percentage between where 100% is "I think I've
         explored everything".
         Used for deciding when to search instead of descending, but might be
         useful for other decisions (should I re-explore earlier levels if my
         ac is too low for the current level?)
         """
-        # TODO: When we get better branches, we might want to have different
+        # TODO: When we get better at branches, we might want to have different
         # algorithms for normal levels and mine levels.
         # TODO: Normal levels should count rooms as well as check the amount of
         # walkable tiles.
         num_walkable_tiles = sum(1 for tile in self.tiles if tile.walkable and tile.explored)
-        # Let's try 250 as the value of explored walkable tiles a level has on
+        # Let's try 300 as the value of explored walkable tiles a level has on
         # average.
-        num_walkable_tiles = float(min(num_walkable_tiles, 250.0))
-        return (num_walkable_tiles / 250.) * 100
+        return (num_walkable_tiles / 300.) * 100

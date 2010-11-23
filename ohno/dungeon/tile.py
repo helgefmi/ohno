@@ -6,6 +6,7 @@ from ohno.dungeon.monster.monster import Monster
 from ohno.dungeon.feature import feature
 from ohno.dungeon.feature.door import Door
 
+from queryable import queryable
 
 _tile_is_feature  = lambda t: t['glyph'] in '.}{#_<>]^|-~ \\'
 _tile_is_item     = lambda t: t['glyph'] in '`0*$[%)(/?!"=+'
@@ -114,28 +115,7 @@ class Tile(object):
         return self.ohno.ai.pathing.dists[self.idx]
 
     # Methods for iterating neighbors
-    @property
-    def orthogonal(self):
-        if self._orthogonal is None:
-            self._orthogonal = [n for n in self.adjacent if abs(self.idx - n.idx) in (1, 80)]
-        assert len(self._orthogonal) <= 4
-        return self._orthogonal
-
-    @property
-    def vertical(self):
-        if self._vertical is None:
-            self._vertical = [o for o in self.orthogonal if abs(self.idx - o.idx) == 1]
-        assert len(self._vertical) <= 2
-        return self._vertical
-
-    @property
-    def horizontal(self):
-        if self._horizontal is None:
-            self._horizontal = [o for o in self.orthogonal if abs(self.idx - o.idx) == 80]
-        assert len(self._horizontal) <= 2
-        return self._horizontal
-
-    @property
+    @queryable
     def adjacent(self):
         """Return the direct neighbors of this tile."""
         # Since ohno.dungeon.level.tiles never changes (it's even a tuple), we
@@ -155,7 +135,28 @@ class Tile(object):
         assert len(self._adjacent) <= 8
         return self._adjacent
 
-    # Methods for simpler API to ohno.ai.pathing.search_where
+    @queryable
+    def orthogonal(self):
+        if self._orthogonal is None:
+            self._orthogonal = [n for n in self.adjacent() if abs(self.idx - n.idx) in (1, 80)]
+        assert len(self._orthogonal) <= 4
+        return self._orthogonal
+
+    @queryable
+    def vertical(self):
+        if self._vertical is None:
+            self._vertical = [o for o in self.orthogonal() if abs(self.idx - o.idx) == 1]
+        assert len(self._vertical) <= 2
+        return self._vertical
+
+    @queryable
+    def horizontal(self):
+        if self._horizontal is None:
+            self._horizontal = [o for o in self.orthogonal() if abs(self.idx - o.idx) == 80]
+        assert len(self._horizontal) <= 2
+        return self._horizontal
+
+    # Methods to make it simpler to query
     @property
     def is_wall(self):
         return self.explored and self.feature and self.feature.appearance['glyph'] in '|- ' and self.feature.appearance['color']['fg'] == 37
@@ -187,6 +188,7 @@ class Tile(object):
         # This might be called before the tile is initialized, so make sure we
         # consider the case where appearance is None
         return self.appearance and self._walkable and self.appearance['glyph'] != '0'
+
     def feature_is_a(self, class_name):
         return self.feature_name == class_name
 

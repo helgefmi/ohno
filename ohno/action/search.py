@@ -17,6 +17,6 @@ class Search(BaseAction):
     def done(self):
         """Update adjacent squares with the amount of searching we've done"""
         self.curtile.searched += self.times
-        for neighbor in self.curtile.adjacent:
+        for neighbor in self.curtile.adjacent():
             # TODO: What if we get interrupted?
             neighbor.searched += self.times
