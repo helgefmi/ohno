@@ -16,6 +16,7 @@ class Explore(BaseStrategy):
     def _closed_doors(self):
         tile = self.ohno.ai.pathing.search(has_closed_door=True).next()
         assert tile.walkable == False
+        assert tile.feature_is_a('Door')
 
         if self.explored_progress >= 100:
             self.ohno.logger.strategy('[explore] I\'ve explored enough, won\'t open door')
@@ -50,12 +51,14 @@ class Explore(BaseStrategy):
         #    self.ohno.logger.strategy('[explore] I\'ve explored enough, won\'t search')
         #    return
 
-        # 1. Find walls
+        # 1. Find walls.
         self.ohno.logger.strategy('[explore] finding walls..')
         walls = self.ohno.ai.pathing.search(is_wall=True)
         good_targets = []
-        sort_dict = {}
+        # See 2.
         bad_max_search = False
+        # See 4.
+        sort_dict = {}
         self.ohno.logger.strategy('[explore] iterating %d walls..')
         for wall in walls:
             # 2. If we have searched this tile enough, skip it. We will search
@@ -64,7 +67,8 @@ class Explore(BaseStrategy):
                 bad_max_search = True
                 continue
 
-            # 3. Filter out walls that have more than one orthogonal walkable, reachable tile
+            # 3. Filter out walls that have more than one orthogonal walkable,
+            #    reachable tile.
             reachable = list(wall.orthogonal(walkable=True, reachable=True))
             if len(reachable) != 1:
                 continue
@@ -75,16 +79,16 @@ class Explore(BaseStrategy):
             sort_dict[target.idx] = sort_dict.get(target.idx, 0) - 1
 
             # 5. Check if we're in the middle of a hallway:
-            #   ##-
-            # #@# |
-            # #   |
+            #   ##
+            # #@#
+            # #
             if len(list(target.orthogonal(is_hallway=True))) > 1:
                continue
 
             good_targets.append(target)
 
-        # If we didn't find anything but skipped a wall because of max_searched,
-        # we'll up max_searched and recurse.
+        # If we didn't find anything but skipped a wall because of `max_searched`,
+        # we'll increment `max_searched` and recurse.
         if bad_max_search and not good_targets:
             self.ohno.logger.strategy('[explore] recursing due to bad_max_search..')
             self.ohno.dungeon.curlevel.max_searched += 10

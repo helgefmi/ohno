@@ -1,8 +1,7 @@
 class Monster(object):
     """
     Base class for a monster.
-    Contains a static method to create new specific Monster instances
-    (i.e. Dwarf, Newt, Lich), and some common methods for all the monsters.
+    (i.e. Dwarf, Newt, Lich), and some common methods / attributes for all the monsters.
     """
 
     def __init__(self, ohno, maptile):

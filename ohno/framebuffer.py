@@ -50,10 +50,7 @@ class FrameBuffer(object):
         2. Gather messages and press space and goto 1. if we get
            a "--More--" message
         3. TODO: handle menus
-        4. Update Hero (stats, position, dlvl, etc)
-        5. Update the dungeon (current level)
-        6. TODO: Send out signals for the messages, such that various submodules
-                 can listen to them and act accordingly.
+        4. Return the messages so `Ohno` can handle them.
         """
         self.ohno.logger.framebuffer('Updating framebuffer..')
 

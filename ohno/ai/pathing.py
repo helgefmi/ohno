@@ -4,22 +4,43 @@ from operator import itemgetter
 from queryable import queryable
 
 class Pathing(object):
+    """
+    Handles the pathing for our Hero!
+    """
     def __init__(self, ohno):
         self.ohno = ohno
         self.previous = self.tick = None
 
     def is_uptodate(self):
-        # Have we called search() in this particular tick?
-        # Mostly used as a sanity check.
+        """
+        Have we called search() in this particular tick?
+        Mostly used as a sanity check.
+        """
         return self.tick == self.ohno.tick
 
     @queryable
     def search(self):
+        """
+        Executes our dijkstra algorithm if we haven't searched yet this turn,
+        and returns an iterator which gives us every reachable tile we see,
+        starting with the nearest one.
+        """
         if not self.is_uptodate():
             self._search()
-        return self.tiles
+        return iter(self._tiles)
 
     def _search(self):
+        """
+        Dijkstra implementation.
+        When executed, the following gets set:
+        - self.dists contains the distance_from_hero of every square.
+        - self.previous can be used to find the full path from the hero
+          to that square.
+        - self._tiles will contain all the reachable squares in order of
+          smallest distance first.
+
+        Should be executed once every tick (that is, one iteration of Ohno.loop)
+        """
         # Make sure we don't call this function more than once each tick, since
         # the pathing obviously can't change untill we do an action.
         assert self.tick != self.ohno.tick
@@ -37,7 +58,7 @@ class Pathing(object):
         self.previous[source.idx] = source
         graph = [(0, source)]
 
-        self.tiles = []
+        self._tiles = []
         while graph:
             cur_dist, current = heapq.heappop(graph)
 
@@ -45,7 +66,7 @@ class Pathing(object):
             if cur_dist == inf:
                 break
 
-            self.tiles.append(current)
+            self._tiles.append(current)
 
             # We can search for an unwalkable tile, but then we can't walk further.
             if not current.walkable:
@@ -76,7 +97,7 @@ class Pathing(object):
                 self.previous[neighbor.idx] = current
                 heapq.heappush(graph, (self.dists[neighbor.idx], neighbor))
 
-        assert self.tiles[0] == source
+        assert self._tiles[0] == source
 
     def get_path(self, tile):
         # Returns an iterator for the path to a particular tile in order.

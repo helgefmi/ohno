@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-import random
 import time
 
 from loglady import LogLady
@@ -96,7 +95,10 @@ class Ohno(object):
             self.last_action = action
 
     def shutdown(self):
-        """Shuts ohno down without saving. You should probably use .save() instead."""
+        """
+        Shuts ohno down without saving.
+        You should probably use .save() instead.
+        """
         self.ui.shutdown() # Curses
         self.running = False
 

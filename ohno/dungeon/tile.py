@@ -88,6 +88,7 @@ class Tile(object):
                 self.set_monster(Monster.create(self, maptile))
 
     def set_monster(self, monster):
+        """Sets self.monster and updates Levle.monsters"""
         if self.monster is not None:
             self.level.monsters.remove(self.monster)
         self.monster = monster
@@ -96,7 +97,7 @@ class Tile(object):
     @property
     def appearance(self):
         """What does this tile look like right now?"""
-        # This could be cached, but doing it like this do work as a sanity check
+        # This could be cached, but doing it like this works as a sanity check
         # aswell :-)
         if self.monster is not None:
             return self.monster.appearance
@@ -110,7 +111,10 @@ class Tile(object):
             return None
 
     def distance_from_hero(self):
-        # Might return float('inf')
+        """
+        Returns the distance from hero as calculated by ai.pathing.
+        If the tile is unreachable, it will return float('inf').
+        """
         assert self.ohno.ai.pathing.tick == self.ohno.tick
         return self.ohno.ai.pathing.dists[self.idx]
 
@@ -138,32 +142,39 @@ class Tile(object):
     @queryable
     def orthogonal(self):
         if self._orthogonal is None:
-            self._orthogonal = [n for n in self.adjacent() if abs(self.idx - n.idx) in (1, 80)]
+            self._orthogonal = tuple(n for n in self.adjacent() \
+                                       if abs(self.idx - n.idx) in (1, 80))
         assert len(self._orthogonal) <= 4
         return self._orthogonal
 
     @queryable
     def vertical(self):
         if self._vertical is None:
-            self._vertical = [o for o in self.orthogonal() if abs(self.idx - o.idx) == 1]
+            self._vertical = tuple(o for o in self.orthogonal() \
+                                     if abs(self.idx - o.idx) == 1)
         assert len(self._vertical) <= 2
         return self._vertical
 
     @queryable
     def horizontal(self):
         if self._horizontal is None:
-            self._horizontal = [o for o in self.orthogonal() if abs(self.idx - o.idx) == 80]
+            self._horizontal = tuple(o for o in self.orthogonal() \
+                                       if abs(self.idx - o.idx) == 80)
         assert len(self._horizontal) <= 2
         return self._horizontal
 
     # Methods to make it simpler to query
     @property
     def is_wall(self):
-        return self.explored and self.feature and self.feature.appearance['glyph'] in '|- ' and self.feature.appearance['color']['fg'] == 37
+        return self.explored and self.feature and  \
+               self.feature.appearance['glyph'] in '|- ' and \
+               self.feature.appearance['color']['fg'] == 37
 
     @property
     def is_hallway(self):
-        return self.explored and self.feature and self.feature.appearance['glyph'] == '#' and self.feature.appearance['color']['fg'] == 37
+        return self.explored and self.feature and \
+               self.feature.appearance['glyph'] == '#' and \
+               self.feature.appearance['color']['fg'] == 37
 
     @property
     def has_monster(self):
@@ -202,11 +213,11 @@ class Tile(object):
     def __repr__(self):
         return str(self)
 
-
     # TODO: Meh, move this to the pathing code.
     #       I see no other uses for this function.
     def is_open_door(self):
-        return self.feature and (self.feature.appearance['glyph'] in '-|' and self.feature.appearance['color']['fg'] == 33)
+        return self.feature and (self.feature.appearance['glyph'] in '-|') and \
+               self.feature.appearance['color']['fg'] == 33
 
     # TODO: Meh, move this to the pathing code.
     #       I see no other uses for this function.

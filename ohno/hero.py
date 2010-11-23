@@ -63,6 +63,9 @@ class Hero(object):
         return self.position[0] * 80 + self.position[1]
 
     def update(self):
+        """
+        Updates the hero attributes after we get new input from the framebuffer
+        """
         self.ohno.logger.hero('Updating hero..')
 
         y, x = self.ohno.framebuffer.get_cursor()

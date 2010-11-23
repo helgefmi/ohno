@@ -1,8 +1,6 @@
 class Item(object):
     """
-    Base class for an item.
-    Contains a static method to create new specific Item instances
-    (i.e. Book, Corpse, Scroll), and some common methods for all the items.
+    Base class for an item. (i.e. Book, Corpse, Scroll)
     """
 
     def __init__(self, ohno, maptile):
