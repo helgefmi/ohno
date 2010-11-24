@@ -8,7 +8,7 @@ class Level(object):
         self.dlvl = dlvl
         self.tiles = tuple(Tile(self, x) for x in xrange(21 * 80))
         self.monsters = []
-        self.max_searched = 10
+        self.max_searched = 12
 
     @queryable
     def tiles_where(self):

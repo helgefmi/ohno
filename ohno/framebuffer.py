@@ -65,6 +65,8 @@ class FrameBuffer(object):
 
             messages += self.get_topline()
 
+            # TODO: Hmm. Apparantely we can get a --More-- on the secound line
+            #       aswell (using the pty client.)
             if '--More--' in messages:
                 # double space so we can split on it later
                 messages = messages.replace('--More--', '  ')

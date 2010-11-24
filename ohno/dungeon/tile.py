@@ -4,7 +4,6 @@ from ohno.dungeon.item.item import Item
 from ohno.dungeon.monster.monster import Monster
 
 from ohno.dungeon.feature import feature
-from ohno.dungeon.feature.door import Door
 
 from queryable import queryable
 
@@ -173,6 +172,7 @@ class Tile(object):
         return self._horizontal
 
     # Methods to make it simpler to query
+    # TODO: Should perhaps use is_ prefix on every one of them
     @property
     def is_wall(self):
         return self.explored and self.feature and  \
@@ -186,12 +186,18 @@ class Tile(object):
                self.feature.appearance.fg == 37
 
     @property
+    def is_floor(self):
+        return self.explored and self.feature and \
+               self.feature.appearance.glyph == '.' and \
+               self.feature.appearance.fg == 37
+
+    @property
     def has_monster(self):
         return self.monster is not None
 
     @property
     def has_closed_door(self):
-        return isinstance(self.feature, Door) and self.feature.closed
+        return self.feature_is_a('Door') and self.feature.closed
 
     @property
     def feature_name(self):

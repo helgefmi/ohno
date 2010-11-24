@@ -13,15 +13,16 @@ class Explore(BaseStrategy):
         return Walk(self.ohno, tile=tile)
 
     def _closed_doors(self):
-        tile = self.ohno.ai.pathing.search(has_closed_door=True).next()
-        assert tile.walkable == False
-        assert tile.feature_is_a('Door')
-
         if self.downstairs and self.explored_progress >= 100:
             self.ohno.logger.strategy('[explore] I\'ve explored enough, won\'t open door')
             return
 
+        tile = self.ohno.ai.pathing.search(has_closed_door=True).next()
         self.ohno.logger.strategy('[explore] found closed door at %r' % tile)
+
+        assert tile.walkable == False
+        assert tile.feature_is_a('Door')
+
         if tile in self.ohno.dungeon.curtile.adjacent():
             if tile.feature.locked:
                 self.ohno.logger.strategy('[explore] door is locked; kicking..')
@@ -72,12 +73,31 @@ class Explore(BaseStrategy):
             target = reachable[0]
             sort_dict[target.idx] = sort_dict.get(target.idx, 0) - 1
 
-            # 5. Check if we're in the middle of a hallway:
+            # 5. Exclude some scenarios
+
+            # More than one adjacent hallway tile
             #   ##
             # #@#
             # #
-            if len(list(target.orthogonal(is_hallway=True))) > 1:
+            hallways = list(target.orthogonal(is_hallway=True))
+            walkables = list(target.orthogonal(walkable=True))
+            if len(hallways) > 1:
                continue
+            # Between a hallway and floortile
+            #   @.
+            # ###
+            # #
+            if hallways and len(walkables) >= 2:
+                continue
+
+            # Priority reductions
+            # In a corner of a room or hallway
+            # |..
+            # |@.
+            # ---
+            if len(list(target.orthogonal(is_wall=True))) == 2 and \
+               len(list(target.horizontal(is_wall=True))) == 1:
+                sort_dict[target.idx] += 2
 
             good_targets.append(target)
 
