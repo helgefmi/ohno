@@ -1,3 +1,5 @@
+from queryable import queryable
+
 from ohno.dungeon.tile import Tile
 
 class Level(object):
@@ -7,6 +9,10 @@ class Level(object):
         self.tiles = tuple(Tile(self, x) for x in xrange(21 * 80))
         self.monsters = []
         self.max_searched = 10
+
+    @queryable
+    def tiles_where(self):
+        return self.tiles
 
     def update(self):
         self.ohno.logger.level('Updating level..')

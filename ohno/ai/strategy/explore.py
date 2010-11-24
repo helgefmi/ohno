@@ -1,4 +1,3 @@
-from ohno.dungeon.feature.staircase import Staircase
 from ohno.ai.strategy.basestrategy import BaseStrategy
 
 from ohno.action.open import Open
@@ -18,10 +17,9 @@ class Explore(BaseStrategy):
         assert tile.walkable == False
         assert tile.feature_is_a('Door')
 
-        # TODO:
-        #if self.explored_progress >= 100:
-        #    self.ohno.logger.strategy('[explore] I\'ve explored enough, won\'t open door')
-        #    return
+        if self.downstairs and self.explored_progress >= 100:
+            self.ohno.logger.strategy('[explore] I\'ve explored enough, won\'t open door')
+            return
 
         self.ohno.logger.strategy('[explore] found closed door at %r' % tile)
         if tile in self.ohno.dungeon.curtile.adjacent():
@@ -37,20 +35,15 @@ class Explore(BaseStrategy):
 
     def _descend(self):
         curtile = self.ohno.dungeon.curtile
-        if curtile.feature_is_a('Staircase') and\
-           curtile.feature.direction == 'down':
+        if curtile in self.downstairs:
            return UseStairs(self.ohno, tile=curtile)
-        else:
-            for tile in self.ohno.ai.pathing.search(feature_name='Staircase'):
-                if tile.feature.direction == 'down':
-                    return Walk(self.ohno, tile=tile)
+        elif self.downstairs:
+            return Walk(self.ohno, tile=self.downstairs[0])
     
     def _search(self):
-        # TODO: Need to have a fallback too..
-        # TODO: Use pathing instead, and check if you have a path to '>' aswell.
-        #if self.explored_progress > 80.0:
-        #    self.ohno.logger.strategy('[explore] I\'ve explored enough, won\'t search')
-        #    return
+        if self.downstairs and self.explored_progress > 80.0:
+            self.ohno.logger.strategy('[explore] I\'ve explored enough, won\'t search')
+            return
 
         # 1. Find walls.
         self.ohno.logger.strategy('[explore] finding walls..')
@@ -115,7 +108,13 @@ class Explore(BaseStrategy):
         #       of `explore` to communicate with eachother; opening doors on
         #       the way to an unexpored tile, searching if there's a really
         #       good spot close by, etc.
-        self.explored_progress = self.ohno.dungeon.curlevel.explored_progress()
+        curlevel = self.ohno.dungeon.curlevel
+        self.explored_progress = curlevel.explored_progress()
+        # TODO: queryable should make this prettier
+        self.downstairs = [
+            tile for tile in curlevel.tiles_where(feature_name='Staircase') \
+                if tile.feature.direction == 'down'
+        ]
         self.ohno.logger.strategy('[explore] explored_progress is %f' % self.explored_progress)
         for method in (self._unexplored, self._closed_doors,
                        self._search, self._descend):
