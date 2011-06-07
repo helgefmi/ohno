@@ -1,4 +1,5 @@
 from ohno.dungeon.level import Level
+from ohno.event.message import MessageEvent
 
 class Dungeon(object):
     def __init__(self, ohno):
@@ -21,8 +22,19 @@ class Dungeon(object):
             self.ohno.logger.dungeon('Found new level (dlvl %d)!' % dlvl)
             self.levels[dlvl] = Level(self.ohno, dlvl)
 
-        self.curlevel = self.levels[dlvl]
-        self.curlevel.update()
+        newlevel = self.levels[dlvl]
+        if self.curlevel != newlevel:
+            self.ohno.logger.dungeon(
+                'We have moved from level %s to level %s' % (
+                    self.curlevel,
+                    newlevel
+                )
+            )
+            if self.curlevel:
+                MessageEvent.unsubscribe(self.curlevel.on_message)
+            MessageEvent.subscribe(newlevel.on_message)
+        self.curlevel = newlevel
+        newlevel.update()
 
         idx = self.ohno.hero.get_position_idx()
         self.curtile = self.curlevel.tiles[idx]

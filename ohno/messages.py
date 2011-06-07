@@ -1,34 +1,30 @@
+from __future__ import absolute_import
+
 import re
 
-_msgparsers = {
-    "^This door is locked": 'locked_door',
-}
+from ohno.event.message import MessageEvent
+
 class Messages(object):
+    _msgparsers = {
+        "^This door is locked": 'locked_door',
+    }
     def __init__(self, ohno):
         self.ohno = ohno
-        self.msgparsers = []
-        for regexp, method in _msgparsers.iteritems():
+        self.compiled_parsers = []
+        for regexp, msgtype in Messages._msgparsers.iteritems():
             compiled_regexp = re.compile(regexp)
-            method_name = method[0] if type(method) is tuple else method
-            args = method[1:] if type(method) is tuple and len(method) > 1 else []
-            self.msgparsers.append((compiled_regexp, method_name, args))
+            self.compiled_parsers.append((compiled_regexp, msgtype))
 
-    def new_message(self, msg):
+    def parse_message(self, msg):
         """
-        Checks if we have a parser for this particular message, and executes
-        the callback associated with this message if it matches
+        Checks if we have a parser for this particular message, and fires a
+        MessageEvent when we have a match.
         """
         self.ohno.logger.messages('Got message: %s' % repr(msg))
-        for regexp, method_name, args in self.msgparsers:
-            match = regexp.match(msg)
-            if match:
-                args = list(match.groups()) + list(args)
-                self.ohno.logger.messages('Found match: name=%r args=%r' % (method_name, args))
-                getattr(self, method_name)(*args)
+        for regexp, msgtype in self.compiled_parsers:
+            if regexp.match(msg):
+                self.ohno.logger.messages('Found match: msgtype=%r' % msgtype)
+                MessageEvent.fire(self.ohno, msgtype, msg)
                 break
         else:
             self.ohno.logger.messages('TODO: Unparsed message %r' % msg)
-
-    def locked_door(self):
-        assert not self.ohno.last_action.tile.feature.locked
-        self.ohno.last_action.tile.feature.locked = True

@@ -4,13 +4,13 @@ import time
 
 from loglady import LogLady
 
-from ohno.client.client import Client
-from ohno.framebuffer import FrameBuffer
-from ohno.ui.ui import UI
-from ohno.hero import Hero
-from ohno.dungeon.dungeon import Dungeon
 from ohno.ai.ai import AI
+from ohno.client.client import Client
+from ohno.dungeon.dungeon import Dungeon
+from ohno.framebuffer import FrameBuffer
 from ohno.messages import Messages
+from ohno.hero import Hero
+from ohno.ui.ui import UI
 
 class Ohno(object):
     """
@@ -22,7 +22,7 @@ class Ohno(object):
         self.logger = LogLady(root_dir + '/logs',
             ('ohno', 'client', 'telnet', 'framebuffer', 'hero', 'dungeon',
              'ui', 'curses', 'input', 'pty', 'strategy', 'action', 'tile',
-             'level', 'messages'))
+             'level', 'messages', 'event'))
 
         # Every submodule needs to be able to find other submodules, so they
         # all take an ohno instance as the first argument.
@@ -66,7 +66,7 @@ class Ohno(object):
 
             # Start parsing the messages
             for message in messages:
-                if message: self.messages.new_message(message)
+                if message: self.messages.parse_message(message)
 
             # Update the user display and/or take input from the user.
             self.ui.update()

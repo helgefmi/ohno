@@ -137,8 +137,8 @@ class Explore(BaseStrategy):
                     if tile.feature.direction == 'down'
         ]
         self.ohno.logger.strategy('[explore] explored_progress is %f' % self.explored_progress)
-        for method in (self._unexplored, self._closed_doors,
-                       self._search, self._descend):
+        for method in (self._closed_doors, self._descend, self._unexplored,
+                       self._search):
             try:
                 result = method()
                 if result:

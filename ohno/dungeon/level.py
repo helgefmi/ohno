@@ -10,6 +10,9 @@ class Level(object):
         self.monsters = []
         self.max_searched = 12
 
+    def __str__(self):
+        return '<Level %s>' % self.dlvl
+
     @queryable
     def tiles_where(self):
         return self.tiles
@@ -61,3 +64,10 @@ class Level(object):
         # Let's try 300 as the value of explored walkable tiles a level has on
         # average.
         return (num_walkable_tiles / 300.) * 100
+
+    def on_message(self, event):
+        if event.msgtype == 'locked_door':
+            tile = self.ohno.last_action.tile
+            assert tile.feature_is_a('Door')
+            self.ohno.logger.level('Locking %r@%s' % (tile, self))
+            tile.feature.lock()

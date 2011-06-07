@@ -8,3 +8,9 @@ class Door(BaseFeature):
     @property
     def closed(self):
         return self.appearance.glyph == ']'
+
+    def lock(self):
+        self.locked = True
+
+    def unlock(self):
+        self.locked = False
