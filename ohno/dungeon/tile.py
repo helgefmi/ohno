@@ -47,9 +47,7 @@ class Tile(object):
             # If it's the first time we're seeing the feature of this tile or if
             # it has changed (i.e. water can spread to nearby floortiles).
             if (not self.feature) or self.feature.appearance != appearance:
-                self.feature = feature.create(self, appearance)
-                self._walkable = (self.is_open_door() or
-                                  _tile_is_walkable(appearance))
+                self.set_feature(appearance)
             self.items = []
             self.has_hero = False
             self.set_monster(None)
@@ -95,6 +93,11 @@ class Tile(object):
                 self.ohno.logger.tile('New monster!')
                 self.set_monster(Monster.create(self, appearance))
             self.ohno.logger.tile('Monstertile is now %r' % self)
+
+    def set_feature(self, appearance):
+            self.feature = feature.create(self, appearance)
+            self._walkable = (self.is_open_door() or
+                                _tile_is_walkable(appearance))
 
     def set_monster(self, monster):
         """Sets self.monster and updates Levle.monsters"""

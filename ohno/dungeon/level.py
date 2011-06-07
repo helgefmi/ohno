@@ -1,6 +1,7 @@
 from queryable import queryable
 
 from ohno.dungeon.tile import Tile
+from ohno import appearance
 
 class Level(object):
     def __init__(self, ohno, dlvl):
@@ -71,3 +72,13 @@ class Level(object):
             assert tile.feature_is_a('Door')
             self.ohno.logger.level('Locking %r@%s' % (tile, self))
             tile.feature.lock()
+        if event.msgtype == 'found_staircase':
+            if event.kwargs['direction'] == 'up':
+                set_to = appearance.STAIRCASE_UP
+            else:
+                set_to = appearance.STAIRCASE_DOWN
+            self.ohno.logger.level('Setting %r to %r' % (
+                self.ohno.dungeon.curtile, set_to
+            ))
+            self.ohno.dungeon.curtile.set_feature(set_to)
+            self.ohno.logger.level('.. There: %r!' % self.ohno.dungeon.curtile)

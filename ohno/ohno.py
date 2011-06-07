@@ -50,6 +50,7 @@ class Ohno(object):
         """
         self.running = True
         self.paused = False
+        self.client.send(':')
         while self.running:
             # First, take input from the client and update our framebuffer.
             # This should always leave the client in a state where _doing stuff_
