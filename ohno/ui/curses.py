@@ -57,13 +57,13 @@ class Curses(object):
     def draw_botlines(self):
         first = 'M:' + str(self.ohno.ui.mode)
         first += ' ' + self.ohno.ui.mode.first_botline()
-        secound = self.ohno.ui.mode.secound_botline()
+        second = self.ohno.ui.mode.second_botline()
 
         first += ' ' * (80 - len(first))
-        secound += ' ' * (80 - len(secound))
+        second += ' ' * (80 - len(second))
 
         self._scr.addstr(21, 0, first)
-        self._scr.addstr(22, 0, secound)
+        self._scr.addstr(22, 0, second)
 
     @classmethod
     def convert_color(cls, appearance):

@@ -1,4 +1,3 @@
-from itertools import chain
 from ohno.ai.strategy.explore import Explore
 from ohno.ai.strategy.battle import Battle
 

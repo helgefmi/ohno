@@ -1,11 +1,39 @@
 from __future__ import absolute_import
 
-import copy
 import re
 
 from ansiterm import Ansiterm
 
-from ohno.appearance import Appearance
+class Appearance(object):
+    """
+    Represents the glyph, color and boldness of a tile on the framebuffer.
+    This is an immutable class.
+    """
+    def __init__(self, fbtile):
+        self._glyph = fbtile.glyph
+        self._fg = fbtile.color['fg']
+        self._bold = fbtile.color['bold']
+
+    glyph = property(lambda self:self._glyph)
+    fg = property(lambda self:self._fg)
+    bold = property(lambda self:self._bold)
+
+    def __eq__(self, other):
+        return hash(self) == hash(other)
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __str__(self):
+        ret = self.glyph
+        if self.fg != 37:
+            ret += ',%d' % (self.fg - 30)
+        if self.bold:
+            ret += 'b'
+        return ret
+
+    def __hash__(self):
+        return str(self).__hash__()
 
 class FrameBuffer(object):
     """
@@ -41,8 +69,7 @@ class FrameBuffer(object):
             }
         }
         """
-        return [Appearance(tile) \
-                 for tile in self.ansiterm.get_tiles(80, 80 * 22)]
+        return [Appearance(tile) for tile in self.ansiterm.get_tiles(80, 80 * 22)]
 
     def get_cursor(self):
         cursor = self.ansiterm.get_cursor()
@@ -55,6 +82,11 @@ class FrameBuffer(object):
            a "--More--" message
         3. TODO: handle menus
         4. Return the messages so `Ohno` can handle them.
+
+        This function initially gets called by Ohno.loop, and should not return 
+        from that call untill the bot is in a state of needing an action (i.e.
+        menus should be closed, no --More-- in topline, no "What do you want to
+        wish for?" etc.
         """
         self.ohno.logger.framebuffer('Updating framebuffer..')
 
@@ -65,7 +97,7 @@ class FrameBuffer(object):
 
             messages += self.get_topline()
 
-            # TODO: Hmm. Apparantely we can get a --More-- on the secound line
+            # TODO: Hmm. Apparantely we can get a --More-- on the second line
             #       aswell (using the pty client.)
             if '--More--' in messages:
                 # double space so we can split on it later
@@ -76,7 +108,7 @@ class FrameBuffer(object):
                 break
 
         messages = FrameBuffer.split_messages.split(messages.strip(' '))
-        self.ohno.logger.framebuffer('All messages: ' + \
-                                ', '.join(map(repr, messages)))
+        self.ohno.logger.framebuffer('All messages: ' + 
+                                     (', '.join(map(repr, messages))))
         
         return messages

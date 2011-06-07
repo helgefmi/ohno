@@ -14,7 +14,7 @@ class Client(object):
             self.ohno.logger.client('Initializing nethack client')
             self._client = Pty(ohno)
         else:
-            assert False
+            raise Exception('config.CLIENT?')
 
     def start_resume_game(self):
         """

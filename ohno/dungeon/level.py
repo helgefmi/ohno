@@ -54,7 +54,10 @@ class Level(object):
         # algorithms for normal levels and mine levels.
         # TODO: Normal levels should count rooms as well as check the amount of
         # walkable tiles.
-        num_walkable_tiles = sum(1 for tile in self.tiles if tile.walkable and tile.explored)
+        num_walkable_tiles = sum(
+            1 for x in self.tiles_where(walkable=True, explored=True)
+        )
+
         # Let's try 300 as the value of explored walkable tiles a level has on
         # average.
         return (num_walkable_tiles / 300.) * 100

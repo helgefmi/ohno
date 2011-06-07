@@ -19,8 +19,8 @@ class Ohno(object):
     def __init__(self, root_dir):
         # Make sure __init__ doesn't do any crazy stuff.
         # Should always make sure initializing Ohno won't throw any exceptions.
-        self.logger = LogLady(root_dir + '/logs', \
-            ('ohno', 'client', 'telnet', 'framebuffer', 'hero', 'dungeon', \
+        self.logger = LogLady(root_dir + '/logs',
+            ('ohno', 'client', 'telnet', 'framebuffer', 'hero', 'dungeon',
              'ui', 'curses', 'input', 'pty', 'strategy', 'action', 'tile',
              'level', 'messages'))
 
@@ -65,8 +65,8 @@ class Ohno(object):
             self.dungeon.update()
 
             # Start parsing the messages
-            for message in filter(len, messages):
-                self.messages.new_message(message)
+            for message in messages:
+                if message: self.messages.new_message(message)
 
             # Update the user display and/or take input from the user.
             self.ui.update()

@@ -76,11 +76,12 @@ class DebugMode(BaseMode):
             tile.distance_from_hero(), 1 if tile.reachable else 0
         )
 
-    def secound_botline(self):
+    def second_botline(self):
         hero = self.ohno.hero
-        return 'D:%d H:%d/%d A:%d X:%d T:%d $%d' % (\
-                    hero.dlvl, hero.hp, hero.maxhp, hero.ac, hero.level,\
-                    hero.turns, hero.gold)
+        return 'D:%d H:%d/%d A:%d X:%d T:%d $%d' % (
+            hero.dlvl, hero.hp, hero.maxhp, hero.ac, hero.level, hero.turns,
+            hero.gold
+        )
 
     def __str__(self):
         return 'debug'

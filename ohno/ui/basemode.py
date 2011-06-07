@@ -14,11 +14,12 @@ class BaseMode(object):
         hero = self.ohno.hero
         return 'P:%2d,%2d' % (hero.position[0], hero.position[1])
 
-    def secound_botline(self):
+    def second_botline(self):
         hero = self.ohno.hero
-        return 'D:%d H:%d/%d A:%d X:%d T:%d $%d' % (\
-                    hero.dlvl, hero.hp, hero.maxhp, hero.ac, hero.level,\
-                    hero.turns, hero.gold)
+        return 'D:%d H:%d/%d A:%d X:%d T:%d $%d' % (
+            hero.dlvl, hero.hp, hero.maxhp, hero.ac, hero.level,
+            hero.turns, hero.gold
+        )
     
     def on_input(self, input):
         if input == '|':

@@ -62,6 +62,9 @@ class Hero(object):
     def get_position_idx(self):
         return self.position[0] * 80 + self.position[1]
 
+    def set_appearance(self, appearance):
+        self.appearance = appearance
+
     def update(self):
         """
         Updates the hero attributes after we get new input from the framebuffer
@@ -89,5 +92,5 @@ class Hero(object):
         self.ohno.logger.hero('Hero updated: %s' % self)
 
     def __str__(self):
-        return '<Hero ' + ' '.join('%s=%s' %(key, getattr(self, key)) \
-                                   for key in self.__dict__) + '>'
+        return '<Hero ' + (' '.join('%s=%s' % (key, getattr(self, key))
+                                        for key in self.__dict__) + '>')

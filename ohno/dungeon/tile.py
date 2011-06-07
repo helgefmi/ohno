@@ -11,7 +11,7 @@ _tile_is_feature  = lambda t: t.glyph in '.}{#_<>]^|-~ \\'
 _tile_is_item     = lambda t: t.glyph in '`0*$[%)(/?!"=+'
 _tile_is_monster  = lambda t: t.glyph in (string.ascii_letters + "12345@'&;:")
 # doors are handled in walkable()
-_tile_is_walkable = lambda t: (t.glyph in '.}{#<>^ ')
+_tile_is_walkable = lambda t: t.glyph in '.}{#<>^ '
 
 class Tile(object):
     def __init__(self, level, idx):
@@ -48,7 +48,8 @@ class Tile(object):
             # it has changed (i.e. water can spread to nearby floortiles).
             if (not self.feature) or self.feature.appearance != appearance:
                 self.feature = feature.create(self, appearance)
-                self._walkable = self.is_open_door() or _tile_is_walkable(appearance)
+                self._walkable = (self.is_open_door() or
+                                  _tile_is_walkable(appearance))
             self.items = []
             self.has_hero = False
             self.set_monster(None)
@@ -62,7 +63,7 @@ class Tile(object):
             # we'll completely remove any previous examined items,
             # since the hero should reexamine the tile anyway.
             # If it stays the same, we'll simply assume nothing has changed.
-            if (not self.items) or self.items[-1].appearance != appearance:
+            if not self.items or self.items[-1].appearance != appearance:
                 self.ohno.logger.tile('New item!')
                 self.items = [Item.create(self, appearance)]
                 # Since this tile might have new information,
@@ -82,7 +83,7 @@ class Tile(object):
                 ))
                 # Not sure if we need this, but this seems like a good place to
                 # check if we're polymorphed.
-                self.ohno.hero.appearance = appearance
+                self.ohno.hero.set_appearance(appearance)
             self.ohno.logger.tile('Herotile is now %r' % self)
         elif _tile_is_monster(appearance):
             # TODO: Might not be true if this is a stone giant standing on a
@@ -140,8 +141,8 @@ class Tile(object):
                 ( 0, -1), ( 0, 1)
             )
             x, y = self.idx % 80, self.idx / 80
-            for (x2, y2) in ((dir[0] + x, dir[1] + y) for dir in dirs):
-                if (0 <= x2 < 80) and (0 <= y2 < 21):
+            for x2, y2 in ((dir[0] + x, dir[1] + y) for dir in dirs):
+                if 0 <= x2 < 80 and 0 <= y2 < 21:
                     self._adjacent.append(self.level.tiles[y2 * 80 + x2])
             self._adjacent = tuple(self._adjacent)
         assert len(self._adjacent) <= 8
@@ -150,24 +151,24 @@ class Tile(object):
     @queryable
     def orthogonal(self):
         if self._orthogonal is None:
-            self._orthogonal = tuple(n for n in self.adjacent() \
-                                       if abs(self.idx - n.idx) in (1, 80))
+            self._orthogonal = tuple(n for n in self.adjacent()
+                                            if abs(self.idx - n.idx) in (1, 80))
         assert len(self._orthogonal) <= 4
         return self._orthogonal
 
     @queryable
     def vertical(self):
         if self._vertical is None:
-            self._vertical = tuple(o for o in self.orthogonal() \
-                                     if abs(self.idx - o.idx) == 1)
+            self._vertical = tuple(o for o in self.orthogonal()
+                                            if abs(self.idx - o.idx) == 1)
         assert len(self._vertical) <= 2
         return self._vertical
 
     @queryable
     def horizontal(self):
         if self._horizontal is None:
-            self._horizontal = tuple(o for o in self.orthogonal() \
-                                       if abs(self.idx - o.idx) == 80)
+            self._horizontal = tuple(o for o in self.orthogonal()
+                                            if abs(self.idx - o.idx) == 80)
         assert len(self._horizontal) <= 2
         return self._horizontal
 
@@ -175,21 +176,21 @@ class Tile(object):
     # TODO: Should perhaps use is_ prefix on every one of them
     @property
     def is_wall(self):
-        return self.explored and self.feature and  \
-               self.feature.appearance.glyph in '|- ' and \
-               self.feature.appearance.fg == 37
+        return (self.explored and self.feature and 
+                self.feature.appearance.glyph in '|- ' and
+                self.feature.appearance.fg == 37)
 
     @property
     def is_hallway(self):
-        return self.explored and self.feature and \
-               self.feature.appearance.glyph == '#' and \
-               self.feature.appearance.fg == 37
+        return (self.explored and self.feature and
+                self.feature.appearance.glyph == '#' and
+                self.feature.appearance.fg == 37)
 
     @property
     def is_floor(self):
-        return self.explored and self.feature and \
-               self.feature.appearance.glyph == '.' and \
-               self.feature.appearance.fg == 37
+        return (self.explored and self.feature and
+                self.feature.appearance.glyph == '.' and
+                self.feature.appearance.fg == 37)
 
     @property
     def has_monster(self):
@@ -213,7 +214,9 @@ class Tile(object):
         # the ability to fly (i think :)..
         # This might be called before the tile is initialized, so make sure we
         # consider the case where appearance is None
-        return self.appearance and self._walkable and self.appearance.glyph != '0'
+        return (self.appearance and
+                self._walkable and
+                self.appearance.glyph != '0')
 
     def feature_is_a(self, class_name):
         return self.feature_name == class_name
@@ -222,7 +225,8 @@ class Tile(object):
         return '<Tile %d G=%s E=%d W=%d S=%d D=%f>' % (
             self.idx, self.appearance.glyph if self.appearance else ' ',
             self.explored, int(self.walkable or 0), self.searched,
-            self.distance_from_hero() if self.ohno.ai.pathing.is_uptodate() else -1
+            self.distance_from_hero() if self.ohno.ai.pathing.is_uptodate()
+                                      else -1
         )
 
     def __repr__(self):
@@ -231,8 +235,9 @@ class Tile(object):
     # TODO: Meh, move this to the pathing code.
     #       I see no other uses for this function.
     def is_open_door(self):
-        return self.feature and (self.feature.appearance.glyph in '-|') and \
-               self.feature.appearance.fg == 33
+        return (self.feature and
+                self.feature.appearance.glyph in '-|' and
+                self.feature.appearance.fg == 33)
 
     # TODO: Meh, move this to the pathing code.
     #       I see no other uses for this function.

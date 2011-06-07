@@ -1,5 +1,4 @@
 import heapq
-from operator import itemgetter
 
 from queryable import queryable
 
@@ -39,7 +38,7 @@ class Pathing(object):
         - self._tiles will contain all the reachable squares in order of
           smallest distance first.
 
-        Should be executed once every tick (that is, one iteration of Ohno.loop)
+        Should be executed once every tick (i.e. one iteration of Ohno.loop)
         """
         # Make sure we don't call this function more than once each tick, since
         # the pathing obviously can't change untill we do an action.
@@ -82,9 +81,10 @@ class Pathing(object):
                 # TODO: Remove can_walk_diagonally and is_open_door and put the
                 # logic in here.
                 # We can't move diagonally through an open door
-                can_diagonal = current.can_walk_diagonally() and \
-                               neighbor.can_walk_diagonally()
-                if not can_diagonal and abs(neighbor.idx - current.idx) not in (1, 80):
+                can_diagonal = (current.can_walk_diagonally() and
+                                neighbor.can_walk_diagonally())
+                if (not can_diagonal and
+                    abs(neighbor.idx - current.idx) not in (1, 80)):
                     continue
                 # Set the distance to the neighbor square
                 weight = 1

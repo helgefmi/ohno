@@ -1,7 +1,7 @@
 import re
 
 _msgparsers = {
-    "^This door is locked":                                          'locked_door',
+    "^This door is locked": 'locked_door',
 }
 class Messages(object):
     def __init__(self, ohno):

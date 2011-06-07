@@ -52,7 +52,7 @@ class Telnet(object):
                 break
             elif 'will recover in 10' in data:
                 self.ohno.logger.telnet('Stale nethack processes.. '
-                                        'Waiting 10 secounds.')
+                                        'Waiting 10 seconds.')
                 time.sleep(11)
             elif 'Restoring save file' in data:
                 self.ohno.logger.telnet('Previous game found, restoring..')
