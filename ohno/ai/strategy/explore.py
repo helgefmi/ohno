@@ -129,11 +129,10 @@ class Explore(BaseStrategy):
         #       of `explore` to communicate with each other; opening doors on
         #       the way to an unexpored tile, searching if there's a really
         #       good spot close by, etc.
-        curlevel = self.ohno.dungeon.curlevel
-        self.explored_progress = curlevel.explored_progress()
+        self.explored_progress = self.ohno.dungeon.curlevel.explored_progress()
         # TODO: queryable should make this prettier
         self.downstairs = [
-            tile for tile in curlevel.tiles_where(feature_name='Staircase')
+            tile for tile in self.ohno.ai.pathing.search(feature_name='Staircase')
                     if tile.feature.direction == 'down'
         ]
         self.ohno.logger.strategy('[explore] explored_progress is %f' % self.explored_progress)
