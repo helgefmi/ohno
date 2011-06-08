@@ -9,6 +9,7 @@ class Messages(object):
         "^This door is locked": 'locked_door',
         "^There is a staircase (?P<direction>up|down) here": 'found_staircase',
         "^There is an open door here": 'found_open_door',
+        'Welcome(?: again)? to [A-Z]': 'found_shop',
     }
     def __init__(self, ohno):
         self.ohno = ohno

@@ -85,3 +85,10 @@ class Level(object):
         if event.msgtype == 'found_open_door':
             self.ohno.logger.level('Setting %s to an open door' % curtile)
             curtile.set_feature(appearance.OPEN_DOOR)
+
+        if event.msgtype == 'found_shop':
+            shop_tiles = [tile for tile in curtile.adjacent(walkable=True)
+                                                if tile.appearance != '#']
+            self.ohno.logger.level('shop_tiles: %s' % map(str, shop_tiles))
+            for tile in shop_tiles:
+                tile.set_in_shop()

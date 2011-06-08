@@ -75,6 +75,9 @@ class Pathing(object):
                 # Investigate each tile once
                 if self.previous[neighbor.idx]:
                     continue
+                # TODO: This is obviously a hack
+                if neighbor.in_shop:
+                    continue
                 # Don't search past two unexplored tiles in a direction
                 if not current.explored and not neighbor.explored:
                     continue

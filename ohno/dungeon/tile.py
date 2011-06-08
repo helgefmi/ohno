@@ -27,6 +27,7 @@ class Tile(object):
         self.items = []
         self.monster = None
         self.has_hero = None
+        self.in_shop = False
 
         self._adjacent = None
         self._orthogonal = None
@@ -106,6 +107,9 @@ class Tile(object):
             self.level.monsters.remove(self.monster)
         self.monster = monster
         self.level.monsters.append(monster)
+
+    def set_in_shop(self):
+        self.in_shop = True
     
     @property
     def appearance(self):
@@ -177,7 +181,6 @@ class Tile(object):
         return self._horizontal
 
     # Methods to make it simpler to query
-    # TODO: Should perhaps use is_ prefix on every one of them
     @property
     def is_wall(self):
         return (self.explored and self.feature and 
@@ -220,6 +223,7 @@ class Tile(object):
         # consider the case where appearance is None
         return (self.appearance and
                 self._walkable and
+                not self.in_shop and # TODO: This is a hack.
                 self.appearance.glyph != '0')
 
     def feature_is_a(self, class_name):
