@@ -55,6 +55,7 @@ class Tile(object):
             self.ohno.logger.tile('Itemtile! %r' % self)
             self._walkable = True
             self.has_hero = False
+            self.set_monster(None)
 
             # If the appearance of the tile changes (i.e. something else
             # has dropped, or a monster picking up the topmost item),

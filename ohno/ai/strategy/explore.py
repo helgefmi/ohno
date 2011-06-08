@@ -21,6 +21,7 @@ class Explore(BaseStrategy):
         tile = self.ohno.ai.pathing.search(has_closed_door=True).next()
         self.ohno.logger.strategy('[explore] found closed door at %r' % tile)
 
+        # (note to self: this is the NEXT tile, adjacent to hero, not the door)
         assert tile.walkable == False
         assert tile.feature_is_a('Door')
 
