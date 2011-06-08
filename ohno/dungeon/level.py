@@ -67,18 +67,21 @@ class Level(object):
         return (num_walkable_tiles / 300.) * 100
 
     def on_message(self, event):
+        curtile = self.ohno.dungeon.curtile
         if event.msgtype == 'locked_door':
             tile = self.ohno.last_action.tile
             assert tile.feature_is_a('Door')
             self.ohno.logger.level('Locking %r@%s' % (tile, self))
             tile.feature.lock()
+
         if event.msgtype == 'found_staircase':
             if event.kwargs['direction'] == 'up':
                 set_to = appearance.STAIRCASE_UP
             else:
                 set_to = appearance.STAIRCASE_DOWN
-            self.ohno.logger.level('Setting %r to %r' % (
-                self.ohno.dungeon.curtile, set_to
-            ))
-            self.ohno.dungeon.curtile.set_feature(set_to)
-            self.ohno.logger.level('.. There: %r!' % self.ohno.dungeon.curtile)
+            self.ohno.logger.level('Setting %s to %s' % (curtile, set_to))
+            curtile.set_feature(set_to)
+
+        if event.msgtype == 'found_open_door':
+            self.ohno.logger.level('Setting %s to an open door' % curtile)
+            curtile.set_feature(appearance.OPEN_DOOR)

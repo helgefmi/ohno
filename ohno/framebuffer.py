@@ -77,7 +77,7 @@ class FrameBuffer(object):
         1. Read from the client
         2. Gather messages and press space and goto 1. if we get
            a "--More--" message
-        3. TODO: handle menus
+        3. Handle menus
         4. Return the messages so `Ohno` can handle them.
 
         This function initially gets called by Ohno.loop, and should not return 
@@ -89,21 +89,32 @@ class FrameBuffer(object):
 
         messages = ''
         while True:
+            # Read from the client update the framebuffer
             data = self.ohno.client.receive()
             self.feed(data)
 
-            messages += self.get_topline()
+            # Topline should only contain messages
+            messages += self.get_topline().strip()
 
-            # TODO: Hmm. Apparantely we can get a --More-- on the second line
-            #       aswell (using the pty client.)
-            if '--More--' in messages:
-                # double space so we can split on it later
-                messages = messages.replace('--More--', '  ')
-                # There's more messages in store for us!
+            if '--More--' in self.get_string():
+                # Sometimes, messages will span two lines; we need to check for
+                # that!
+                if '--More--' not in self.get_topline():
+                    endpos = self.get_string().index('--More--')
+                    if self.get_string()[endpos - 1] != ' ':
+                        if endpos / 80 != 1:
+                            raise Exception(
+                                'Got --More-- on %s line..' % (endpos / 80)
+                            )
+                        messages += self.get_string()[80:endpos] + '  '
+                    else:
+                        break
+                # There's more messages.
                 self.ohno.client.send(' ')
             else:
                 break
 
+        messages = messages.replace('--More--', '  ')
         messages = FrameBuffer.split_messages.split(messages.strip(' '))
         self.ohno.logger.framebuffer('All messages: ' + 
                                      ', '.join(map(repr, messages)))
@@ -111,7 +122,7 @@ class FrameBuffer(object):
         if 'Things that are here:' in self.get_string():
             self.parse_things_that_are_here()
 
-        if 'You die...' in messages:
+        if 'Do you want your possessions identified? [ynq] (y)' in messages:
             self.ohno.logger.framebuffer('Seems like we\'re dead. Cya!')
             self.ohno.shutdown()
             print "You died."

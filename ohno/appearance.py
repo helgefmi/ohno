@@ -21,7 +21,7 @@ class Appearance(object):
     def __str__(self):
         ret = self.glyph
         if self.fg != 37:
-            ret += ',%d' % (self.fg - 30)
+            ret += '%d' % (self.fg - 30)
         if self.bold:
             ret += 'b'
         return ret
@@ -31,3 +31,4 @@ class Appearance(object):
 
 STAIRCASE_DOWN = Appearance('>', {'fg': 37, 'bold': False})
 STAIRCASE_UP = Appearance('<', {'fg': 37, 'bold': False})
+OPEN_DOOR = Appearance('-', {'fg': 33, 'bold': False})
