@@ -59,6 +59,11 @@ class Ohno(object):
             # because we want to update the hero and dungeon before sending them
             # to ohno.messages.
             messages = self.framebuffer.update()
+
+            # framebuffer.update() might shut us down if we're dead.
+            if not self.running:
+                break
+
             # Updates stats like hp, ac, hunger, score, dlvl
             self.hero.update()
             # Creates new level and/or updates the level with what we got from

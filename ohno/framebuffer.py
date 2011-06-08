@@ -27,6 +27,9 @@ class FrameBuffer(object):
     def get_bottomlines(self):
         return self.ansiterm.get_string(80 * 22, 80 * 24)
 
+    def get_string(self):
+        return self.ansiterm.get_string(0, 80 * 24)
+
     def get_maptiles(self):
         """
         Returns a list of the map tiles (line 2 to and incl. 22). The tiles are
@@ -46,6 +49,28 @@ class FrameBuffer(object):
     def get_cursor(self):
         cursor = self.ansiterm.get_cursor()
         return (int(cursor['y']), int(cursor['x']))
+
+    def parse_things_that_are_here(self):
+        string = self.get_string()
+
+        start_pos = string.index('Things that are here:')
+        start_x = start_pos % 80
+        start_y = start_pos / 80
+
+        things = []
+        for y in xrange(start_y + 1, 25):
+            pos = y * 80 + start_x
+            end_pos = string.index('  ', pos)
+            if end_pos >= y * 80 + 80:
+                end_pos = y * 80 + 80
+
+            thing = string[y * 80 + start_x:end_pos]
+            if thing == '--More--':
+                break
+            things.append(thing)
+        self.ohno.logger.framebuffer('Things that is here: %r' % things)
+        self.ohno.client.send(' ')
+        self.update()
 
     def update(self):
         """
@@ -81,6 +106,14 @@ class FrameBuffer(object):
 
         messages = FrameBuffer.split_messages.split(messages.strip(' '))
         self.ohno.logger.framebuffer('All messages: ' + 
-                                     (', '.join(map(repr, messages))))
+                                     ', '.join(map(repr, messages)))
         
+        if 'Things that are here:' in self.get_string():
+            self.parse_things_that_are_here()
+
+        if 'You die...' in messages:
+            self.ohno.logger.framebuffer('Seems like we\'re dead. Cya!')
+            self.ohno.shutdown()
+            print "You died."
+
         return messages
