@@ -38,9 +38,9 @@ def main():
         #       be known, so we don't always need a console.
         bpython_locals = {
             'ohno': instance,
-            'e': e
+            'e': e,
         }
-        bpython.embed(locals_=bpython_locals)
+        bpython.embed(locals_=bpython_locals, banner=traceback.format_exc())
         traceback.print_exc()
 
 if __name__ == '__main__':

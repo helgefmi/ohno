@@ -15,7 +15,6 @@ class Pty(object):
         return os.write(self.child, data)
 
     def receive(self):
-        time.sleep(0.1)
         ret = os.read(self.child, 4096)
         # Since we're asking for 4096 bytes, if we get that exact amount of
         # bytes, there's probably more to be read.
