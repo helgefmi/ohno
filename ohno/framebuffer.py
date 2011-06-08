@@ -104,10 +104,10 @@ class FrameBuffer(object):
                     if self.get_string()[endpos - 1] != ' ':
                         if endpos / 80 != 1:
                             raise Exception(
-                                'Got --More-- on %s line..' % (endpos / 80)
+                                'Got --More-- on line %s' % (endpos / 80)
                             )
                         messages += self.get_string()[80:endpos] + '  '
-                    else:
+                    elif endpos % 80 > 0:
                         break
                 # There's more messages.
                 self.ohno.client.send(' ')

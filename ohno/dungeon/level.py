@@ -92,3 +92,9 @@ class Level(object):
             self.ohno.logger.level('shop_tiles: %s' % map(str, shop_tiles))
             for tile in shop_tiles:
                 tile.set_in_shop()
+
+        if event.msgtype == 'kicked_door':
+            self.ohno.logger.level(
+                'Setting %s to floor.' % self.ohno.last_action.tile
+            )
+            self.ohno.last_action.tile.set_feature(appearance.FLOOR)

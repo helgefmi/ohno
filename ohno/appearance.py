@@ -32,3 +32,4 @@ class Appearance(object):
 STAIRCASE_DOWN = Appearance('>', {'fg': 37, 'bold': False})
 STAIRCASE_UP = Appearance('<', {'fg': 37, 'bold': False})
 OPEN_DOOR = Appearance('-', {'fg': 33, 'bold': False})
+FLOOR = Appearance('.', {'fg': 37, 'bold': False})
