@@ -1,5 +1,4 @@
 from ohno.action.baseaction import BaseAction
-from ohno import util
 
 class Search(BaseAction):
     def __init__(self, ohno, times=1):

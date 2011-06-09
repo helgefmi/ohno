@@ -1,5 +1,4 @@
 from ohno.action.baseaction import BaseAction
-from ohno import util
 
 class UseStairs(BaseAction):
     def __init__(self, ohno, tile):

@@ -9,4 +9,5 @@ _delta2vi_map = {
      79: 'b'
 }
 def delta2vi(delta):
+    global _delta2vi_map
     return _delta2vi_map[delta]

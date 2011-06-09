@@ -122,7 +122,8 @@ class FrameBuffer(object):
         if 'Things that are here:' in self.get_string():
             self.parse_things_that_are_here()
 
-        if 'Do you want your possessions identified? [ynq] (y)' in messages:
+        if ('Do you want your possessions identified? [ynq] (y)' in messages or
+           'Do you want to see what you had when you died? [ynq] (y)' in messages):
             self.ohno.logger.framebuffer('Seems like we\'re dead. Cya!')
             self.ohno.shutdown()
             print "You died."
