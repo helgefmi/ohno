@@ -101,16 +101,22 @@ class Tile(object):
             self._walkable = (self.is_open_door() or
                                 _tile_is_walkable(appearance))
 
-    def set_monster(self, monster):
+    def set_monster(self, new_monster):
         """Sets self.monster and updates Levle.monsters"""
-        if self.monster is not None:
+        if new_monster == self.monster:
+            return
+
+        if self.monster:
             self.level.monsters.remove(self.monster)
-        self.monster = monster
-        self.level.monsters.append(monster)
+
+        if new_monster:
+            self.level.monsters.append(new_monster)
+
+        self.monster = new_monster
 
     def set_in_shop(self):
         self.in_shop = True
-    
+
     @property
     def appearance(self):
         """What does this tile look like right now?"""

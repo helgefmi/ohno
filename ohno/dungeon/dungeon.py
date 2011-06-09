@@ -45,3 +45,5 @@ class Dungeon(object):
         assert self.curtile.idx == idx
         assert self.curtile.appearance == self.ohno.hero.appearance
         assert self.curtile.monster is None
+
+        self.curlevel.farlook_monsters()

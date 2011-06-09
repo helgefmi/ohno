@@ -4,12 +4,13 @@ import time
 
 from loglady import LogLady
 
+from ohno import util
 from ohno.ai.ai import AI
 from ohno.client.client import Client
 from ohno.dungeon.dungeon import Dungeon
 from ohno.framebuffer import FrameBuffer
-from ohno.messages import Messages
 from ohno.hero import Hero
+from ohno.messages import Messages
 from ohno.ui.ui import UI
 
 class Ohno(object):
@@ -112,3 +113,13 @@ class Ohno(object):
         """Tries to save the game and then runs .shutdown()"""
         self.client.send('\x1b\x1b\x1b\x1bSyq')
         self.shutdown()
+
+    def farlook(self, to_tile):
+        from_tile = self.dungeon.curtile
+        x1, y1 = from_tile.idx % 80, from_tile.idx / 80
+        x2, y2 = to_tile.idx % 80, to_tile.idx / 80
+        sequence = util.farlook(x1, y1, x2, y2)
+        self.client.send(';%s.' % sequence)
+        messages = self.framebuffer.update()
+        assert len(messages) == 2
+        return messages[1]

@@ -1,9 +1,13 @@
+import re
+
 from queryable import queryable
 
 from ohno.dungeon.tile import Tile
 from ohno import appearance
 
 class Level(object):
+    inspectname = re.compile('\((.*?)\)$')
+
     def __init__(self, ohno, dlvl):
         self.ohno = ohno
         self.dlvl = dlvl
@@ -45,6 +49,19 @@ class Level(object):
                 if tile.appearance.glyph == ' ':
                     tile._walkable = False
 
+    def farlook_monsters(self):
+        # Check to see if there's a monster on this level that we're not sure
+        # what is yet. 
+        for monster in self.monsters:
+            do_farlook = (len(monster.spoilers) > 1 or
+                          (monster.peaceful is None and
+                                not monster.is_peaceful))
+
+            if do_farlook:
+                info = self.ohno.farlook(monster.tile)
+                name = Level.inspectname.search(info).group(1)
+                monster.monster_info(name)
+    
     def explored_progress(self):
         """
         How much of the level do we think is explored?
