@@ -59,6 +59,10 @@ class Hero(object):
 
         self.blind = False # TODO
 
+    def __str__(self):
+        return '<Hero ' + (' '.join('%s=%s' % (key, getattr(self, key))
+                                        for key in self.__dict__) + '>')
+
     def get_position_idx(self):
         return self.position[0] * 80 + self.position[1]
 
@@ -90,7 +94,3 @@ class Hero(object):
             setattr(self, key, value)
 
         self.ohno.logger.hero('Hero updated: %s' % self)
-
-    def __str__(self):
-        return '<Hero ' + (' '.join('%s=%s' % (key, getattr(self, key))
-                                        for key in self.__dict__) + '>')
