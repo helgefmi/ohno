@@ -1,3 +1,4 @@
+from ohno.appearance import Appearance
 from collections import defaultdict
 from queryable import queryable
 
@@ -306,20 +307,18 @@ M3_INFRAVISIBLE = 0x0200 # visible by infravision
 CLR_BLACK           = 0
 CLR_RED             = 1
 CLR_GREEN           = 2
-CLR_BROWN           = 3 # on IBM, low-intensity yellow is brown
+CLR_BROWN           = 3
 CLR_BLUE            = 4
 CLR_MAGENTA         = 5
 CLR_CYAN            = 6
-CLR_GRAY            = 7 # low-intensity white
-NO_COLOR            = 8
-CLR_ORANGE          = 9
-CLR_BRIGHT_GREEN    = 10
-CLR_YELLOW          = 11
-CLR_BRIGHT_BLUE     = 12
-CLR_BRIGHT_MAGENTA  = 13
-CLR_BRIGHT_CYAN     = 14
-CLR_WHITE           = 15
-CLR_MAX             = 16
+CLR_GRAY            = 7
+CLR_ORANGE          = 9  # red
+CLR_BRIGHT_GREEN    = 10 # green
+CLR_YELLOW          = 11 # brown
+CLR_BRIGHT_BLUE     = 12 # blue
+CLR_BRIGHT_MAGENTA  = 13 # agenta
+CLR_BRIGHT_CYAN     = 14 # cyan
+CLR_WHITE           = 15 # gray
 
 # }}}
 # MR_ {{{
@@ -492,19 +491,30 @@ class Monster(object):
         self.mflags3 = args.pop(0) # yet more boolean bitflags
         self.mcolor = args.pop(0) # color to use
 
+        self.appearance = Appearance(self.get_glyph(), {
+            'fg': 30 + (self.mcolor % 8),
+            'bold': self.mcolor > 8
+        })
+
         assert args == []
 
-    def __str__(self):
+    def debug(self):
         return '<Monster ' + (' '.join('%s=%s' % (key, getattr(self, key))
                                         for key in self.__dict__) + '>')
-
-    __repr__ = __str__
 
     def is_peaceful(self):
         return self.mflags2 & M2_PEACEFUL > 0
 
     def get_glyph(self):
         return Monster.glyphs[self.mlet]
+
+    def __str__(self):
+        return '<Monster "%s" A=%s P=%s L=%d>' % (
+            self.name, self.appearance,
+            int(self.is_peaceful()),
+            self.mlevel
+        )
+    __repr__ = __str__
 
 # }}}
 # Attack {{{
@@ -925,9 +935,12 @@ def monsters_where():
     return monsters
 
 # }}}
-# by_glyph {{{
+# by_ {{{
 
 by_glyph = defaultdict(list)
-map(lambda m:by_glyph[m.get_glyph()].append(m), monsters) # yes, yes, whatever.
+map(lambda m:by_glyph[m.get_glyph()].append(m), monsters)
+
+by_appearance = defaultdict(list)
+map(lambda m:by_appearance[m.appearance].append(m), monsters)
 
 # }}}

@@ -64,16 +64,23 @@ class DebugMode(BaseMode):
         idx = self.get_cursor_idx()
         tile = self.ohno.dungeon.curlevel.tiles[idx]
 
-        return 'P:%2d,%2d C:%2d,%2d(%4d) W:%d E:%d F:%s I:%d M:%s A:%s S:%d Di:%s R:%d' % (
-            hero.position[0], hero.position[1],
-            self.cursor['y'], self.cursor['x'], idx,
-            tile.walkable, tile.explored,
-            tile.feature.appearance if tile.feature else ' ',
+        extra = ''
+        if tile.monster and len(tile.monster.spoilers) == 1:
+            spoiler = tile.monster.spoilers[0]
+            extra += ' %s P=%d' % (spoiler.name, spoiler.is_peaceful())
+
+        return '%2d,%2d W:%d R:%d E:%d F:%s I:%d M:%s A:%s S:%d Di:%s %s' % (
+            self.cursor['y'], self.cursor['x'],
+            tile.walkable,
+            1 if tile.reachable else 0,
+            tile.explored,
+            tile.feature.appearance if tile.feature else '  ',
             len(tile.items),
-            tile.monster.appearance if tile.monster else ' ',
+            tile.monster.appearance if tile.monster else '  ',
             tile.appearance,
             tile.searched,
-            tile.distance_from_hero(), 1 if tile.reachable else 0
+            tile.distance_from_hero(),
+            extra
         )
 
     def second_botline(self):

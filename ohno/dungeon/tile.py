@@ -1,7 +1,7 @@
 import string
 
 from ohno.dungeon.item.item import Item
-from ohno.dungeon.monster.monster import Monster
+from ohno.dungeon.monster import Monster
 
 from ohno.dungeon.feature import feature
 
