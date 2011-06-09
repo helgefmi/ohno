@@ -11,9 +11,11 @@ class Battle(BaseStrategy):
         #       offensively, position itself strategically, and know how to
         #       handle big packs of monsters (who to attack first?)
         monsters = self.ohno.ai.pathing.search(has_monster=True)
-        try:
-            tile = monsters.next()
-        except StopIteration:
+        for tile in monsters:
+            if tile.monster.is_peaceful:
+                continue
+            break
+        else:
             return
 
         self.ohno.logger.strategy('[battle] Found monster at: %r' % tile)

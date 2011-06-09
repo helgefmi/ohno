@@ -16,8 +16,9 @@ class Monster(object):
         self.appearance = maptile
 
         self.spoilers = monsters.by_appearance[maptile]
-        assert self.spoilers
-        self.ohno.logger.monster('Found spoiler: %s' % self.spoilers)
+        if str(maptile) != 'I7':
+            assert self.spoilers, maptile
+            self.ohno.logger.monster('Found spoiler: %s' % self.spoilers)
 
         self.peaceful = None # Means we haven't explicitly checked yet.
 
@@ -27,6 +28,7 @@ class Monster(object):
             self.peaceful = True
             name = info[9:]
         else:
+            self.peaceful = False
             name = info
 
         self.ohno.logger.monster('Inferring spoiler (%s)' % self.spoilers)
@@ -36,4 +38,12 @@ class Monster(object):
 
     @property
     def is_peaceful(self):
-        return self.peaceful or all(x.is_peaceful() for x in self.spoilers)
+        if self.peaceful is not None:
+            return self.peaceful
+        return all(x.is_peaceful() for x in self.spoilers)
+
+    def __str__(self):
+        return '<Monster S=%s P=%s>' % (
+            self.spoilers, self.peaceful
+        )
+    __repr__ = __str__

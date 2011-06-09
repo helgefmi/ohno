@@ -67,7 +67,7 @@ class DebugMode(BaseMode):
         extra = ''
         if tile.monster and len(tile.monster.spoilers) == 1:
             spoiler = tile.monster.spoilers[0]
-            extra += ' %s P=%d' % (spoiler.name, spoiler.is_peaceful())
+            extra += ' %s P=%d' % (spoiler.name, tile.monster.is_peaceful)
 
         return '%2d,%2d W:%d R:%d E:%d F:%s I:%d M:%s A:%s S:%d Di:%s %s' % (
             self.cursor['y'], self.cursor['x'],

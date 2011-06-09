@@ -58,7 +58,11 @@ class Level(object):
                                 not monster.is_peaceful))
 
             if do_farlook:
+                self.ohno.logger.level('Doing farlook on %s (%s)' % (
+                    monster.tile, monster
+                ))
                 info = self.ohno.farlook(monster.tile)
+                self.ohno.logger.level('Got info: %s' % info)
                 name = Level.inspectname.search(info).group(1)
                 monster.monster_info(name)
     
