@@ -11,6 +11,8 @@ class Messages(object):
         "^There is an open door here": 'found_open_door',
         'Welcome(?: again)? to [A-Z]': 'found_shop',
         '^As you kick the door, it crashes open': 'kicked_door',
+        '^The door opens\.': 'opened_door',
+        '^A trap door opens up under you': 'fell_through_trapdoor',
     }
 
     def __init__(self, ohno):

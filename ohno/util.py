@@ -22,17 +22,17 @@ def farlook(x1, y1, x2, y2):
 
     xdir = cmp(x2, x1)
     ydir = cmp(y2, y1)
-    xlong = abs(x1 - x2) >= 8
-    ylong = abs(y1 - y2) >= 8
+    xfar = abs(x1 - x2) >= 8
+    yfar = abs(y1 - y2) >= 8
     xdelta = delta2vi(xdir) if xdir else 0
     ydelta = delta2vi(80 * ydir) if ydir else 0
     xydelta = delta2vi(xdir + 80 * ydir)
 
-    if xlong and ylong:
+    if xfar and yfar:
         return xydelta.upper() + farlook(x1 + 8 * xdir, y1 + 8 * ydir, x2, y2)
-    if xlong:
+    if xfar:
         return xdelta.upper() + farlook(x1 + 8 * xdir, y1, x2, y2)
-    if ylong:
+    if yfar:
         return ydelta.upper() + farlook(x1, y1 + 8 * ydir, x2, y2)
 
     if xdir and ydir:

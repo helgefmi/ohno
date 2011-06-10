@@ -6,7 +6,13 @@ from ohno.dungeon.tile import Tile
 from ohno import appearance
 
 class Level(object):
-    inspectname = re.compile('\((.*?)\)$')
+    inspectname = re.compile(
+        '\('
+            '(?P<peaceful>peaceful )?'
+            '(?P<name>.*?)'
+            '(?: - .*|, .*)?'
+        '\)$'
+    )
 
     def __init__(self, ohno, dlvl):
         self.ohno = ohno
@@ -61,10 +67,10 @@ class Level(object):
                 self.ohno.logger.level('Doing farlook on %s (%s)' % (
                     monster.tile, monster
                 ))
-                info = self.ohno.farlook(monster.tile)
-                self.ohno.logger.level('Got info: %s' % info)
-                name = Level.inspectname.search(info).group(1)
-                monster.monster_info(name)
+                message = self.ohno.farlook(monster.tile)
+                self.ohno.logger.level('Got message: %s' % message)
+                info = Level.inspectname.search(message).groupdict()
+                monster.monster_info(info)
     
     def explored_progress(self):
         """
@@ -107,15 +113,23 @@ class Level(object):
             self.ohno.logger.level('Setting %s to an open door' % curtile)
             curtile.set_feature(appearance.OPEN_DOOR)
 
-        if event.msgtype == 'found_shop':
-            shop_tiles = [tile for tile in curtile.adjacent(walkable=True)
-                                                if tile.appearance != '#']
-            self.ohno.logger.level('shop_tiles: %s' % map(str, shop_tiles))
-            for tile in shop_tiles:
-                tile.set_in_shop()
+        #if event.msgtype == 'found_shop':
+        #    shop_tiles = [tile for tile in curtile.adjacent(walkable=True)
+        #                                        if tile.appearance != '#']
+        #    self.ohno.logger.level('shop_tiles: %s' % map(str, shop_tiles))
+        #    for tile in shop_tiles:
+        #        tile.set_in_shop()
 
         if event.msgtype == 'kicked_door':
+            assert self.ohno.last_action.isa('Kick')
             self.ohno.logger.level(
                 'Setting %s to floor.' % self.ohno.last_action.tile
             )
             self.ohno.last_action.tile.set_feature(appearance.FLOOR)
+
+        if event.msgtype == 'opened_door':
+            assert self.ohno.last_action.isa('Open')
+            self.ohno.logger.level(
+                'Setting %s to floor.' % self.ohno.last_action.tile
+            )
+            self.ohno.last_action.tile.set_feature(appearance.OPEN_DOOR)

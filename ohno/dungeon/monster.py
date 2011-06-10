@@ -1,4 +1,5 @@
 from ohno.spoilers import monsters
+from ohno.spoilers import shopkeeper
 
 class Monster(object):
     """
@@ -16,22 +17,22 @@ class Monster(object):
         self.appearance = maptile
 
         self.spoilers = monsters.by_appearance[maptile]
-        if str(maptile) != 'I7':
+        if str(maptile) != 'I7': # Invisible monster
             assert self.spoilers, maptile
             self.ohno.logger.monster('Found spoiler: %s' % self.spoilers)
 
         self.peaceful = None # Means we haven't explicitly checked yet.
 
     def monster_info(self, info):
-        if info.startswith('peaceful '):
-            self.ohno.logger.monster('%s is peaceful!' % self)
-            self.peaceful = True
-            name = info[9:]
-        else:
-            self.peaceful = False
-            name = info
+        self.peaceful = bool(info['peaceful'])
+        self.ohno.logger.monster('Is %s is peaceful? %s!' % (
+            self, self.peaceful
+        ))
 
-        self.ohno.logger.monster('Inferring spoiler (%s)' % self.spoilers)
+        name = info['name']
+        if name in shopkeeper.all_names:
+            name = 'shopkeeper'
+
         self.spoilers = [x for x in self.spoilers if x.name == name]
         assert len(self.spoilers) == 1, self
         self.ohno.logger.monster('Spoiler is %s' % self.spoilers[0])

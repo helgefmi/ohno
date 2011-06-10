@@ -15,14 +15,14 @@ class Pty(object):
         return os.write(self.child, data)
 
     def receive(self):
-        time.sleep(0.02)
-        ret = os.read(self.child, 4096)
+        time.sleep(0.08)
+        ret = os.read(self.child, 1024)
         # Since we're asking for 4096 bytes, if we get that exact amount of
         # bytes, there's probably more to be read.
         # This isn't a foolproof method and is bound to fail at some point, but
         # that should be really rare.
-        if len(ret) >= 4095:
-            ret += os.read(self.child, 4096)
+        while len(ret) in [1024, 2048, 4096, 8192]:
+            ret += self.receive()
         return ret
 
     def start_resume_game(self):

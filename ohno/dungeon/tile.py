@@ -7,7 +7,7 @@ from ohno.dungeon.feature import feature
 
 from queryable import queryable
 
-_tile_is_feature  = lambda t: t.glyph in '.}{#_<>]^|-~ \\'
+_tile_is_feature  = lambda t: t.glyph in '.}{#_<>]^|-~ \\' or str(t) == 'm4'
 _tile_is_item     = lambda t: t.glyph in '`0*$[%)(/?!"=+'
 _tile_is_monster  = lambda t: t.glyph in (string.ascii_letters + "12345@'&;:")
 # doors are handled in walkable()
@@ -229,7 +229,7 @@ class Tile(object):
         # consider the case where appearance is None
         return (self.appearance and
                 self._walkable and
-                not self.in_shop and # TODO: This is a hack.
+                not self.monster and
                 self.appearance.glyph != '0')
 
     def feature_is_a(self, class_name):

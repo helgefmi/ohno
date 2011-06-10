@@ -7,3 +7,6 @@ class BaseAction(object):
 
     def done(self):
         pass
+
+    def isa(self, name):
+        return self.__class__.__name__ == name

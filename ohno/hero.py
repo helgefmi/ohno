@@ -2,7 +2,10 @@ import re
 
 def _parse_stat(stat):
     """'18/53' -> 15.53000"""
-    return float(stat.replace('/', '.'))
+    stat = stat.replace('/', '.')
+    if '**' in stat:
+        return float(stat.replace('*', '0')) + 1
+    return float(stat)
 
 class Hero(object):
     # /usr/games/nethack
