@@ -7,7 +7,6 @@ class Item(object):
         self.ohno = ohno
         self.appearance = appearance
 
-    @staticmethod
-    def create(ohno, appearance):
-        """Checks `appearance` for which item to create"""
-        return Item(ohno, appearance)
+def create(ohno, appearance):
+    """Checks `appearance` for which item to create"""
+    return Item(ohno, appearance)

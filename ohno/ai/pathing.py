@@ -75,17 +75,12 @@ class Pathing(object):
                 # Investigate each tile once
                 if self.previous[neighbor.idx]:
                     continue
-                # TODO: This is obviously a hack
-                if neighbor.in_shop:
-                    continue
                 # Don't search past two unexplored tiles in a direction
                 if not current.explored and not neighbor.explored:
                     continue
-                # TODO: Remove can_walk_diagonally and is_open_door and put the
-                # logic in here.
                 # We can't move diagonally through an open door
-                can_diagonal = (current.can_walk_diagonally() and
-                                neighbor.can_walk_diagonally())
+                can_diagonal = (not current.is_open_door() and
+                               not neighbor.is_open_door())
                 if (not can_diagonal and
                     abs(neighbor.idx - current.idx) not in (1, 80)):
                     continue

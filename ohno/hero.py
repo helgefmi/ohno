@@ -65,6 +65,7 @@ class Hero(object):
     def __str__(self):
         return '<Hero ' + (' '.join('%s=%s' % (key, getattr(self, key))
                                         for key in self.__dict__) + '>')
+    __repr__ = __str__
 
     def get_position_idx(self):
         return self.position[0] * 80 + self.position[1]

@@ -8,10 +8,6 @@ class Appearance(object):
         self._fg = color['fg']
         self._bold = color['bold']
 
-    glyph = property(lambda self:self._glyph)
-    fg = property(lambda self:self._fg)
-    bold = property(lambda self:self._bold)
-
     def __eq__(self, other):
         return hash(self) == hash(other)
 
@@ -27,6 +23,18 @@ class Appearance(object):
 
     def __hash__(self):
         return hash(str(self))
+
+    @property
+    def glyph(self):
+        return self._glyph
+
+    @property
+    def fg(self):
+        return self._fg
+
+    @property
+    def bold(self):
+        return self._bold
 
 STAIRCASE_DOWN = Appearance('>', {'fg': 37, 'bold': False})
 STAIRCASE_UP = Appearance('<', {'fg': 37, 'bold': False})

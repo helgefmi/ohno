@@ -6,22 +6,24 @@ class Monster(object):
     Represents a monster on a tile.
     """
 
-    @staticmethod
-    def create(ohno, maptile):
-        """Checks `maptile` for which monster to create"""
-        return Monster(ohno, maptile)
-
     def __init__(self, tile, maptile):
         self.ohno = tile.ohno
         self.tile = tile
         self.appearance = maptile
 
+        # Means we haven't explicitly checked yet.
+        self.peaceful = None
         self.spoilers = monsters.by_appearance[maptile]
-        if str(maptile) != 'I7': # Invisible monster
-            assert self.spoilers, maptile
-            self.ohno.logger.monster('Found spoiler: %s' % self.spoilers)
+        self.ohno.logger.monster('Found spoiler: %s' % self.spoilers)
 
-        self.peaceful = None # Means we haven't explicitly checked yet.
+        if str(maptile) not in ['I7', 'X7']:
+            assert self.spoilers, maptile
+
+    def __str__(self):
+        return '<Monster S=%s P=%s>' % (
+            self.spoilers, self.peaceful
+        )
+    __repr__ = __str__
 
     def monster_info(self, info):
         self.peaceful = bool(info['peaceful'])
@@ -43,8 +45,6 @@ class Monster(object):
             return self.peaceful
         return all(x.is_peaceful() for x in self.spoilers)
 
-    def __str__(self):
-        return '<Monster S=%s P=%s>' % (
-            self.spoilers, self.peaceful
-        )
-    __repr__ = __str__
+def create(ohno, maptile):
+    """Checks `maptile` for which monster to create"""
+    return Monster(ohno, maptile)

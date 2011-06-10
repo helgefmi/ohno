@@ -65,8 +65,9 @@ class Ohno(object):
             if not self.running:
                 break
 
-            # Updates stats like hp, ac, hunger, score, dlvl
+            # Updates stats (bottomlines) and hero's position.
             self.hero.update()
+
             # Creates new level and/or updates the level with what we got from
             # framebuffer.
             self.dungeon.update()

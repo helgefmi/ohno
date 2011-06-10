@@ -10,8 +10,9 @@ class Dungeon(object):
 
     def update(self):
         """
-        1. Check if we're on a new level, and make on if we are
-        2. Set self.curlevel and self.curtile, and update the current level
+        1. Check if we're on a new level, and make on if we are.
+        2. Set self.curlevel and self.curtile
+        3. Update the current level.
         """
         # TODO: Branches. We need to know which branch we are in and which
         #       levels are in which branch.
@@ -19,7 +20,7 @@ class Dungeon(object):
         #       the detection code should be in Level.
         dlvl = self.ohno.hero.dlvl
         if dlvl not in self.levels:
-            self.ohno.logger.dungeon('Found new level (dlvl %d)!' % dlvl)
+            self.ohno.logger.dungeon('Found dlvl %d!' % dlvl)
             self.levels[dlvl] = Level(self.ohno, dlvl)
 
         newlevel = self.levels[dlvl]
@@ -34,16 +35,19 @@ class Dungeon(object):
                 MessageEvent.unsubscribe(self.curlevel.on_message)
             MessageEvent.subscribe(newlevel.on_message)
         self.curlevel = newlevel
-        newlevel.update()
 
         idx = self.ohno.hero.get_position_idx()
         self.curtile = self.curlevel.tiles[idx]
 
-        self.ohno.logger.dungeon('Current tile is %r' % self.curtile)
+        self.ohno.logger.dungeon(
+            'curtile before updating level: %r' % self.curtile
+        )
+        self.curlevel.update()
+        self.ohno.logger.dungeon(
+            'curtile after updating level: %r' % self.curtile
+        )
 
         # Some sanity checks
         assert self.curtile.idx == idx
         assert self.curtile.appearance == self.ohno.hero.appearance
         assert self.curtile.monster is None
-
-        self.curlevel.farlook_monsters()

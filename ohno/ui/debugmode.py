@@ -20,6 +20,10 @@ class DebugMode(BaseMode):
         }
         self.ohno.paused = True
 
+    def __str__(self):
+        return 'debug'
+    __repr__ = __str__
+
     def get_cursor_idx(self):
         return self.cursor['y'] * 80 + self.cursor['x']
 
@@ -89,6 +93,3 @@ class DebugMode(BaseMode):
             hero.dlvl, hero.hp, hero.maxhp, hero.ac, hero.level, hero.turns,
             hero.gold
         )
-
-    def __str__(self):
-        return 'debug'

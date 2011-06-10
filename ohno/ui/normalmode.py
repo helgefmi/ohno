@@ -8,12 +8,13 @@ class NormalMode(BaseMode):
         self.ohno = ohno
         self.ohno.paused = False
 
+    def __str__(self):
+        return 'normal'
+    __repr__ = __str__
+
     def on_input(self, input):
         if input in '|sp':
             return super(NormalMode, self).on_input(input)
         elif input == 'd':
             from ohno.ui.debugmode import DebugMode
             return DebugMode
-
-    def __str__(self):
-        return 'normal'

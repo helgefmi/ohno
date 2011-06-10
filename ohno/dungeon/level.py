@@ -17,61 +17,63 @@ class Level(object):
     def __init__(self, ohno, dlvl):
         self.ohno = ohno
         self.dlvl = dlvl
+        # Tiles should only mutate, never be replaced by new ones.
         self.tiles = tuple(Tile(self, x) for x in xrange(21 * 80))
         self.monsters = []
         self.max_searched = 12
 
     def __str__(self):
         return '<Level %s>' % self.dlvl
+    __repr__ = __str__
 
-    @queryable
-    def tiles_where(self):
-        return self.tiles
+    def _farlook_monsters(self):
+        # Check to see if there's a monster on this level that we're not sure
+        # what is yet. 
+        for monster in self.monsters:
+            if not (len(monster.spoilers) > 1 or
+                    (monster.peaceful is None and not monster.is_peaceful)):
+                continue
+
+            self.ohno.logger.level('Doing farlook on %s (%s)' % (
+                monster.tile, monster
+            ))
+            message = self.ohno.farlook(monster.tile)
+            self.ohno.logger.level('Got message: %s' % message)
+            info = Level.inspectname.search(message).groupdict()
+            self.ohno.logger.level('Parsed: %s' % info)
+            monster.monster_info(info)
 
     def update(self):
+        """
+        This will update the current level.
+        1. Make changes to the tiles of this level.
+        2. Update newly explored tiles as explored.
+        3. Farlook interesting monsters.
+        """
         self.ohno.logger.level('Updating level..')
         maptiles = self.ohno.framebuffer.get_maptiles()
-        for (i, tile) in enumerate(self.tiles):
+        for i, tile in enumerate(self.tiles):
             maptile = maptiles[i]
             
             # No point in updating a tile that didn't change since last time.
             if tile.appearance != maptile:
-                #self.ohno.logger.level('Updating %d: %r' % (i, tile))
                 tile.set(maptile)
-                #self.ohno.logger.level('RESULT:  %d: %r' % (i, tile))
 
-        curtile = self.tiles[self.ohno.hero.get_position_idx()]
-        self.ohno.logger.level('Curtile after level update %r' % curtile)
-        curtile.explored = True
+        self.ohno.dungeon.curtile.explored = True
         
         # Since empty spaces might both be walkable and not, the only way to
         # find out (well.. at this point anyway) is to stand adjacent to the
         # square and see if it lights up (see if the glyph changes or not).
         # If it doesn't, we need to set the tile to not walkable.
         if not self.ohno.hero.blind:
-            for tile in curtile.adjacent():
+            for tile in self.ohno.dungeon.curtile.adjacent():
                 if not tile.items:
                     tile.explored = True
                 if tile.appearance.glyph == ' ':
                     tile._walkable = False
 
-    def farlook_monsters(self):
-        # Check to see if there's a monster on this level that we're not sure
-        # what is yet. 
-        for monster in self.monsters:
-            do_farlook = (len(monster.spoilers) > 1 or
-                          (monster.peaceful is None and
-                                not monster.is_peaceful))
+        self._farlook_monsters()
 
-            if do_farlook:
-                self.ohno.logger.level('Doing farlook on %s (%s)' % (
-                    monster.tile, monster
-                ))
-                message = self.ohno.farlook(monster.tile)
-                self.ohno.logger.level('Got message: %s' % message)
-                info = Level.inspectname.search(message).groupdict()
-                monster.monster_info(info)
-    
     def explored_progress(self):
         """
         How much of the level do we think is explored?
@@ -85,8 +87,8 @@ class Level(object):
         # algorithms for normal levels and mine levels.
         # TODO: Normal levels should count rooms as well as check the amount of
         # walkable tiles.
-        num_walkable_tiles = sum(
-            1 for x in self.tiles_where(walkable=True, explored=True)
+        num_walkable_tiles = len(
+            list(self.tiles_where(walkable=True, explored=True))
         )
 
         # Let's try 300 as the value of explored walkable tiles a level has on
@@ -95,9 +97,11 @@ class Level(object):
 
     def on_message(self, event):
         curtile = self.ohno.dungeon.curtile
+
         if event.msgtype == 'locked_door':
+            assert self.ohno.last_action.isa('Open')
             tile = self.ohno.last_action.tile
-            assert tile.feature_is_a('Door')
+            assert tile.feature_isa('Door')
             self.ohno.logger.level('Locking %r@%s' % (tile, self))
             tile.feature.lock()
 
@@ -113,19 +117,13 @@ class Level(object):
             self.ohno.logger.level('Setting %s to an open door' % curtile)
             curtile.set_feature(appearance.OPEN_DOOR)
 
-        #if event.msgtype == 'found_shop':
-        #    shop_tiles = [tile for tile in curtile.adjacent(walkable=True)
-        #                                        if tile.appearance != '#']
-        #    self.ohno.logger.level('shop_tiles: %s' % map(str, shop_tiles))
-        #    for tile in shop_tiles:
-        #        tile.set_in_shop()
-
         if event.msgtype == 'kicked_door':
             assert self.ohno.last_action.isa('Kick')
+            tile = self.ohno.last_action.tile
             self.ohno.logger.level(
                 'Setting %s to floor.' % self.ohno.last_action.tile
             )
-            self.ohno.last_action.tile.set_feature(appearance.FLOOR)
+            tile.set_feature(appearance.FLOOR)
 
         if event.msgtype == 'opened_door':
             assert self.ohno.last_action.isa('Open')
@@ -133,3 +131,7 @@ class Level(object):
                 'Setting %s to floor.' % self.ohno.last_action.tile
             )
             self.ohno.last_action.tile.set_feature(appearance.OPEN_DOOR)
+
+    @queryable
+    def tiles_where(self):
+        return self.tiles

@@ -22,7 +22,7 @@ class Explore(BaseStrategy):
         self.ohno.logger.strategy('[explore] found closed door at %r' % tile)
 
         assert tile.walkable == False
-        assert tile.feature_is_a('Door')
+        assert tile.feature_isa('Door')
 
         if tile in self.ohno.dungeon.curtile.adjacent():
             if tile.feature.locked:
