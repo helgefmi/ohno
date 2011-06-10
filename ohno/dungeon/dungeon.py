@@ -36,7 +36,7 @@ class Dungeon(object):
             MessageEvent.subscribe(newlevel.on_message)
         self.curlevel = newlevel
 
-        idx = self.ohno.hero.get_position_idx()
+        idx = self.ohno.hero.position.idx()
         self.curtile = self.curlevel.tiles[idx]
 
         self.ohno.logger.dungeon(

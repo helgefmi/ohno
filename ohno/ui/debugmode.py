@@ -12,11 +12,10 @@ class DebugMode(BaseMode):
     """
     def __init__(self, ohno):
         self.ohno = ohno
-        y, x = self.ohno.hero.position
         # Debug cursor, for investigating tiles while the game is paused.
         self.cursor = {
-            'y': y,
-            'x': x
+            'y': self.ohno.hero.position.y,
+            'x': self.ohno.hero.position.x,
         }
         self.ohno.paused = True
 

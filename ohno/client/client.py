@@ -25,12 +25,12 @@ class Client(object):
         self._client.start_resume_game()
         self.ohno.logger.client('Game should be started/resumed.')
 
-    def send(self, data):
+    def send(self, data, **kwargs):
         self.ohno.logger.client('> ' + repr(data))
-        return self._client.send(data)
+        return self._client.send(data, **kwargs)
 
-    def receive(self):
+    def receive(self, **kwargs):
         self.ohno.logger.client('Calling receive() on client..')
-        data = self._client.receive()
+        data = self._client.receive(**kwargs)
         self.ohno.logger.client('< ' + repr(data))
         return data

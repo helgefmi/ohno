@@ -5,6 +5,7 @@ import re
 from ansiterm import Ansiterm
 
 from ohno.appearance import Appearance
+from ohno.point import Point
 
 class FrameBuffer(object):
     """
@@ -129,5 +130,4 @@ class FrameBuffer(object):
 
     def get_cursor(self):
         cursor = self.ansiterm.get_cursor()
-        return (int(cursor['y']), int(cursor['x']))
-
+        return Point(int(cursor['x']), int(cursor['y']))

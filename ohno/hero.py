@@ -1,4 +1,8 @@
+from __future__ import absolute_import
+
 import re
+
+from ohno.point import Point
 
 def _parse_stat(stat):
     """'18/53' -> 15.53000"""
@@ -45,7 +49,7 @@ class Hero(object):
 
         self.appearance = None
 
-        self.position = (None, None)
+        self.position = Point()
         self.name = None
         self.str = self.dex = None
         self.con = self.int = None
@@ -67,9 +71,6 @@ class Hero(object):
                                         for key in self.__dict__) + '>')
     __repr__ = __str__
 
-    def get_position_idx(self):
-        return self.position[0] * 80 + self.position[1]
-
     def set_appearance(self, appearance):
         self.appearance = appearance
 
@@ -79,8 +80,8 @@ class Hero(object):
         """
         self.ohno.logger.hero('Updating hero..')
 
-        y, x = self.ohno.framebuffer.get_cursor()
-        self.position = (y - 1, x) # Compensate for the topline
+        cursor = self.ohno.framebuffer.get_cursor()
+        self.position.set(cursor.x, cursor.y - 1)
 
         bottomlines = self.ohno.framebuffer.get_bottomlines()
         match = Hero.parse_bottomline.match(bottomlines).groupdict()

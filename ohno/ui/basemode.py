@@ -12,7 +12,7 @@ class BaseMode(object):
 
     def first_botline(self):
         hero = self.ohno.hero
-        return 'P:%2d,%2d' % (hero.position[0], hero.position[1])
+        return 'P:%2d,%2d' % (hero.position.x, hero.position.y)
 
     def second_botline(self):
         hero = self.ohno.hero

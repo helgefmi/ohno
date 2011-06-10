@@ -15,7 +15,7 @@ class Pty(object):
         return os.write(self.child, data)
 
     def receive(self):
-        time.sleep(0.08)
+        time.sleep(0.05)
         ret = os.read(self.child, 1024)
         # Since we're asking for 4096 bytes, if we get that exact amount of
         # bytes, there's probably more to be read.
@@ -38,16 +38,13 @@ class Pty(object):
             self.ohno.logger.pty('(CHILD) This should never happen.')
             sys.exit(1)
         else:
-            time.sleep(0.3)
+            time.sleep(0.25)
             self.ohno.logger.pty('(PARENT) Receving initial data from child..')
             data = self.receive()
-            time.sleep(0.3)
             if 'Shall I pick a character' in data:
                 self.ohno.logger.pty('(PARENT) Creating new character..')
                 self.send('nvhl ')
             elif 'Restoring save file' in data:
                 self.ohno.logger.pty('(PARENT) Resuming game..')
                 self.send(' ')
-            else:
-                assert False
-            time.sleep(0.3)
+            time.sleep(0.25)
