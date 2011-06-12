@@ -125,6 +125,11 @@ class Tile(object):
 
         if new_monster:
             self.level.monsters.append(new_monster)
+            # Sometimes, a monster can open a door and right on it in one turn,
+            # this will confuse ohno as it will still think it's a door under
+            # the monster.
+            if self.feature_isa('Door'):
+                self.feature = None
 
         self.monster = new_monster
 

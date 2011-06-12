@@ -27,10 +27,14 @@ class Walk(BaseAction):
            self.next.items and
            self.next in self.ohno.dungeon.curtile.adjacent()):
             if self.next.appearance.glyph == '$':
-                self.ohno.logger.action('Setting %s to not walkable.' % self.next)
+                self.ohno.logger.action(
+                    '[walk] Setting %s to not walkable.' % self.next
+                )
                 self.next._walkable = False
             else:
-                self.ohno.logger.action('Setting %s to open door.' % self.next)
+                self.ohno.logger.action(
+                    '[walk] Setting %s to open door.' % self.next
+                )
                 self.next.set_feature(appearance.OPEN_DOOR)
             return
 
