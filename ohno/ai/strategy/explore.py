@@ -21,8 +21,8 @@ class Explore(BaseStrategy):
         tile = self.ohno.ai.pathing.search(has_closed_door=True).next()
         self.ohno.logger.strategy('[explore] found closed door at %r' % tile)
 
-        assert tile.walkable == False
-        assert tile.feature_isa('Door')
+        assert tile.walkable == False, tile
+        assert tile.feature_isa('Door'), tile
 
         if tile in self.ohno.dungeon.curtile.adjacent():
             if tile.feature.locked:

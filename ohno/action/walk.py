@@ -21,9 +21,17 @@ class Walk(BaseAction):
     def done(self):
         # If we tried to move to a tile whose feature is hidden behind an item,
         # and was unsuccessful, it's probably an open door.
-        if (self.next != self.ohno.dungeon.curtile and
+        success = self.next == self.ohno.dungeon.curtile
+        if (not success and
            not self.next.feature and
            self.next.items and
            self.next in self.ohno.dungeon.curtile.adjacent()):
-            self.ohno.logger.action('Setting %s to open door.' % self.next)
-            self.next.set_feature(appearance.OPEN_DOOR)
+            if self.next.appearance.glyph == '$':
+                self.ohno.logger.action('Setting %s to not walkable.' % self.next)
+                self.next._walkable = False
+            else:
+                self.ohno.logger.action('Setting %s to open door.' % self.next)
+                self.next.set_feature(appearance.OPEN_DOOR)
+            return
+
+        assert success, self.next

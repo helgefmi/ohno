@@ -6,7 +6,7 @@ from ohno.dungeon import monster
 from ohno.dungeon.feature import feature
 from ohno.dungeon.item import item
 
-_tile_is_feature  = lambda t: t.glyph in '.}{#_<>]^|-~ \\' or str(t) == 'm4'
+_tile_is_feature  = lambda t: t.glyph in '.}{#_<>]^|-~ \\'
 _tile_is_item     = lambda t: t.glyph in '`0*$[%)(/?!"=+'
 _tile_is_monster  = lambda t: t.glyph in (string.ascii_letters + "12345@'&;:")
 # doors are handled in walkable()

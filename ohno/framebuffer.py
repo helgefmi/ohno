@@ -94,7 +94,7 @@ class FrameBuffer(object):
                 print '\n'.join(messages)
                 return
 
-            if message.startswith('Call a '):
+            if message.startswith('Call a ') or message.startswith('Call an'):
                 self.ohno.client.send('\n')
                 return messages + self.update()
 

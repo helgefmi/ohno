@@ -16,7 +16,7 @@ class Monster(object):
         self.spoilers = monsters.by_appearance[maptile]
         self.ohno.logger.monster('Found spoiler: %s' % self.spoilers)
 
-        if str(maptile) not in ['I7', 'X7']:
+        if str(maptile) not in ['I7', 'X7', 'm4']:
             assert self.spoilers, maptile
 
     def __str__(self):
@@ -35,6 +35,9 @@ class Monster(object):
         if name in shopkeeper.all_names:
             name = 'shopkeeper'
 
+        if name.startswith('priest of ') or name.startswith('priestess of '):
+            name, _, god = name.split(' ')
+
         self.spoilers = [x for x in self.spoilers if x.name == name]
         assert len(self.spoilers) == 1, self
         self.ohno.logger.monster('Spoiler is %s' % self.spoilers[0])
@@ -43,7 +46,7 @@ class Monster(object):
     def is_peaceful(self):
         if self.peaceful is not None:
             return self.peaceful
-        return all(x.is_peaceful() for x in self.spoilers)
+        return self.spoilers and all(x.is_peaceful() for x in self.spoilers)
 
 def create(ohno, maptile):
     """Checks `maptile` for which monster to create"""

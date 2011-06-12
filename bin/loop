@@ -1,0 +1,1 @@
+while true; do bin/ohno; echo "sleeping .."; sleep 5; done

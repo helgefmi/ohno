@@ -36,7 +36,10 @@ class Appearance(object):
     def bold(self):
         return self._bold
 
+# features
 STAIRCASE_DOWN = Appearance('>', {'fg': 37, 'bold': False})
 STAIRCASE_UP = Appearance('<', {'fg': 37, 'bold': False})
 OPEN_DOOR = Appearance('-', {'fg': 33, 'bold': False})
 FLOOR = Appearance('.', {'fg': 37, 'bold': False})
+# monsters
+INVISIBLE_MONSTER = Appearance('I', {'fg': 37, 'bold': False})

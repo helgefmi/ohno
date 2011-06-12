@@ -30,7 +30,6 @@ class Client(object):
         return self._client.send(data, **kwargs)
 
     def receive(self, **kwargs):
-        self.ohno.logger.client('Calling receive() on client..')
         data = self._client.receive(**kwargs)
         self.ohno.logger.client('< ' + repr(data))
         return data

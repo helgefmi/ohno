@@ -490,6 +490,7 @@ class Monster(object):
         self.mflags2 = args.pop(0) # more boolean bitflags
         self.mflags3 = args.pop(0) # yet more boolean bitflags
         self.mcolor = args.pop(0) # color to use
+        if self.mcolor == CLR_BLACK: self.mcolor = CLR_BLUE
 
         self.appearance = Appearance(self.get_glyph(), {
             'fg': 30 + (self.mcolor % 8),

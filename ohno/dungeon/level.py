@@ -34,6 +34,10 @@ class Level(object):
                     (monster.peaceful is None and not monster.is_peaceful)):
                 continue
 
+            # No point in farlooking invisibles.
+            if monster.appearance == appearance.INVISIBLE_MONSTER:
+                continue
+
             self.ohno.logger.level('Doing farlook on %s (%s)' % (
                 monster.tile, monster
             ))
