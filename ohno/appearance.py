@@ -43,3 +43,4 @@ OPEN_DOOR = Appearance('-', {'fg': 33, 'bold': False})
 FLOOR = Appearance('.', {'fg': 37, 'bold': False})
 # monsters
 INVISIBLE_MONSTER = Appearance('I', {'fg': 37, 'bold': False})
+MIMIC = Appearance('m', {'fg': 34, 'bold': False})

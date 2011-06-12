@@ -71,7 +71,7 @@ tools = [
     'Ymla', 'Eed-morra', 'Cubask', 'Nieb', 'Bnowr Falr', 'Telloc Cyaj',
     'Sperc', 'Noskcirdneh', 'Yawolloh', 'Hyeghu', 'Niskal', 'Trahnil',
     'Htargcm', 'Enrobwem', 'Kachzi Rellim', 'Regien', 'Donmyar',
-    'Yelpur', 'Nosnehpets', 'Stewe', 'Renrut', '_Zlaw', 'Nosalnef',
+    'Yelpur', 'Nosnehpets', 'Stewe', 'Renrut', 'Zlaw', 'Nosalnef',
     'Rewuorb', 'Rellenk', 'Yad', 'Cire Htims', 'Y-crad', 'Nenilukah',
     'Corsh', 'Aned',
     'Erreip', 'Nehpets', 'Mron', 'Snivek', 'Lapu', 'Kahztiy',

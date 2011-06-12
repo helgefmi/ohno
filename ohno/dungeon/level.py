@@ -35,7 +35,8 @@ class Level(object):
                 continue
 
             # No point in farlooking invisibles.
-            if monster.appearance == appearance.INVISIBLE_MONSTER:
+            if (monster.appearance == appearance.INVISIBLE_MONSTER or
+               monster.appearance == appearance.MIMIC):
                 continue
 
             self.ohno.logger.level('Doing farlook on %s (%s)' % (
