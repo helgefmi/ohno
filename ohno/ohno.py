@@ -79,7 +79,7 @@ class Ohno(object):
             if first:
                 first = False
                 messages += self.look()
-                messages += self.discoveries()
+                self.discoveries()
 
             # Start parsing the messages
             for message in messages:
@@ -136,7 +136,7 @@ class Ohno(object):
 
     def discoveries(self):
         self.client.send('\\')
-        return self.framebuffer.update()
+        self.framebuffer.update()
 
     def look(self):
         self.client.send(':')
