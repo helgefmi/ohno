@@ -15,6 +15,7 @@ class FrameBuffer(object):
     ohno (see update())
     """
     split_messages = re.compile(' \s+')
+    find_discoveries = re.compile('^(.*?) \((.*?)\)$')
 
     def __init__(self, ohno):
         self.ohno = ohno
@@ -38,6 +39,34 @@ class FrameBuffer(object):
 
             things.append(screen[y * 80 + start_x:end_pos])
         self.ohno.logger.framebuffer('Things that is here: %r' % things)
+
+    def _parse_discoveries(self):
+        discoveries = []
+        start_pos = self.get_string().index('Discoveries')
+        start_x = start_pos % 80
+        start_y = start_pos / 80 + 2
+        while '--More--' in self.get_string():
+            screen = self.get_string()
+            end_pos = self.get_string().index('--More--')
+            for y in xrange(start_y, end_pos / 80):
+                from_pos = y * 80 + start_x
+                to_pos = y * 80 + 80
+                line = screen[from_pos:to_pos]
+                if line[1] != ' ':
+                    continue
+                assert line[2] != ' '
+                line = line[2:].strip()
+                match = FrameBuffer.find_discoveries.match(line)
+                assert match, line
+                identity, appearance = match.groups()
+                discoveries += [(appearance, identity)]
+
+            self.ohno.client.send(' ')
+            self.feed(self.ohno.client.receive())
+
+        self.ohno.logger.framebuffer('Discoveries: %s' % discoveries)
+        for discovery in discoveries:
+            self.ohno.spoilers.items.discover(*discovery)
 
     def _read_messages(self):
         messages = ''
@@ -80,6 +109,11 @@ class FrameBuffer(object):
         messages = self._read_messages()
         self.ohno.logger.framebuffer('All messages: %r' % messages)
         
+        if 'Discoveries' in messages:
+            # We should only get this when there's no other messages.
+            assert len(messages) == 1
+            return self._parse_discoveries()
+
         if 'Things that are here:' in self.get_string():
             self._parse_things_that_are_here()
             self.ohno.client.send(' ')

@@ -1,6 +1,3 @@
-from ohno.spoilers import monsters
-from ohno.spoilers import shopkeeper
-
 class Monster(object):
     """
     Represents a monster on a tile.
@@ -13,7 +10,7 @@ class Monster(object):
 
         # Means we haven't explicitly checked yet.
         self.peaceful = None
-        self.spoilers = monsters.by_appearance[maptile]
+        self.spoilers = self.ohno.spoilers.monsters.by_appearance[maptile]
         self.ohno.logger.monster('Found spoiler: %s' % self.spoilers)
 
         if str(maptile) not in ['I7', 'X7', 'm4']:
@@ -32,7 +29,7 @@ class Monster(object):
         ))
 
         name = info['name']
-        if name in shopkeeper.all_names:
+        if name in self.ohno.spoilers.shopkeeper.all_names:
             name = 'shopkeeper'
 
         if name.startswith('priest of ') or name.startswith('priestess of '):

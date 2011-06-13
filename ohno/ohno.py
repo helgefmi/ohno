@@ -11,6 +11,7 @@ from ohno.dungeon.dungeon import Dungeon
 from ohno.framebuffer import FrameBuffer
 from ohno.hero import Hero
 from ohno.messages import Messages
+from ohno.spoilers.spoilers import Spoilers
 from ohno.ui.ui import UI
 
 class Ohno(object):
@@ -23,7 +24,7 @@ class Ohno(object):
         self.logger = LogLady(root_dir + '/logs',
             ('ohno', 'client', 'telnet', 'framebuffer', 'hero', 'dungeon',
              'ui', 'curses', 'input', 'pty', 'strategy', 'action', 'tile',
-             'level', 'messages', 'event', 'monster'))
+             'level', 'messages', 'event', 'monster', 'spoilers'))
 
         # Every submodule needs to be able to find other submodules, so they
         # all take an ohno instance as the first argument.
@@ -34,6 +35,7 @@ class Ohno(object):
         self.dungeon = Dungeon(self)
         self.ai = AI(self)
         self.messages = Messages(self)
+        self.spoilers = Spoilers(self)
 
         self.paused = self.running = None
         self.last_action = None
@@ -51,7 +53,7 @@ class Ohno(object):
         """
         self.running = True
         self.paused = False
-        self.client.send(':')
+        first = True
         while self.running:
             # First, take input from the client and update our framebuffer.
             # This should always leave the client in a state where _doing stuff_
@@ -71,6 +73,13 @@ class Ohno(object):
             # Creates new level and/or updates the level with what we got from
             # framebuffer.
             self.dungeon.update()
+
+            # Update ohno about the current game (inventory, discoveries, etc.)
+            # the first pass through this loop.
+            if first:
+                first = False
+                self.look()
+                self.discoveries()
 
             # Start parsing the messages
             for message in messages:
@@ -124,3 +133,11 @@ class Ohno(object):
         messages = self.framebuffer.update()
         assert len(messages) == 2
         return messages[1]
+
+    def discoveries(self):
+        self.client.send('\\')
+        return self.framebuffer.update()
+
+    def look(self):
+        self.client.send(':')
+        return self.framebuffer.update()
