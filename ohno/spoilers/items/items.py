@@ -6,9 +6,17 @@ from ohno.spoilers.items import amulet, armor, food, gem, other, potion, \
 
 class Items(object):
     def __init__(self, ohno):
+        """
+        This will iterate through all the item spoilers
+        (found in ohno/spoilers/items/*.py), and add the items to
+        _item_by_identity and _items_by_appearance.
+        """
         self.ohno = ohno
+        # Maps identity (string) to item (dict).
         self._item_by_identity = dict()
+        # Maps appearance (string) to a list of items.
         self._items_by_appearance = defaultdict(dict)
+        # Some dicts to make it easier to lookup raw strings.
         self._identity_plurals = {}
         self._appearance_plurals = {}
 
@@ -20,14 +28,20 @@ class Items(object):
                     getattr(module, 'appearance_plurals')()
                 )
 
-            self.ohno.logger.spoilers('Getting items from %s' % module)
             items, defaults = getattr(module, 'items')()
+            self.ohno.logger.spoilers('Getting %d items from %s' % (
+                len(items), module)
+            )
+
             for identity, itemattrs in items.iteritems():
+                # The items are simply stored in a dict.
                 item = defaults.copy()
                 item.update(itemattrs)
 
                 plural = item.pop('plural', None)
 
+                # An item can have a single appearance, or several. We'll just
+                # store them in `appearances` if there are any.
                 appearances = []
                 if 'appearance' in item:
                     appearances.append(item.pop('appearance'))
@@ -50,6 +64,11 @@ class Items(object):
         return key
 
     def _simplify_appearance(self, key):
+        """
+        Simplifies an appearance, since we only use the simplest possible form
+        in _items_by_appearance.
+        E.g. go from "fizzy potions" to "fizzy".
+        """
         if key in self._appearance_plurals:
             key = self._appearance_plurals[key]
 
@@ -58,6 +77,7 @@ class Items(object):
         key = re.compile(' spellbooks?$').sub('', key)
         key = re.compile(' rings?$').sub('', key)
         key = re.compile(' wands?$').sub('', key)
+        key = re.compile(' amulets?$').sub('', key)
 
         return key
 
@@ -70,6 +90,16 @@ class Items(object):
         return self._items_by_appearance[key]
 
     def discover(self, appearance, identity):
+        """
+        This will let us know that we have found out that `identity` has been
+        given `appearance` as appearance in this game.
+        This can be useful since we'll eliminate `identity` from all the other
+        potential appearances, and might find new discoveries in the process
+        (i.e. after we remove `identity` from an appearance, if that appearance
+        only have one possibility left, we can be sure the possiblity maps to
+        that appearance).
+        """
+
         self.ohno.logger.spoilers('Discovered %s -> %s' % (
             appearance, identity
         ))
@@ -83,6 +113,9 @@ class Items(object):
         items = self._items_by_appearance[appearance]
         assert items[identity] == item
 
+        # iterate through our current appearance/item dict and remove the newly
+        # discovered item from all non-matching appearance.
+        # Also check for new appearances in the process.
         discoveries = {}
         for key, value in self._items_by_appearance.iteritems():
             if key == appearance:
@@ -93,6 +126,7 @@ class Items(object):
                     identity, key
                 ))
                 assert len(value) > 0
+                # Check if the appearance can only map to one item.
                 if len(value) == 1:
                     discoveries[key] = value.values()[0]['name']
 
@@ -102,6 +136,8 @@ class Items(object):
         #))
         #self._items_by_appearance[appearance] = {identity: item}
 
+        # If we found new discoveries during the above block of code, recurse
+        # this function with those.
         if discoveries:
             self.ohno.logger.spoilers('New discoveries: %s' % discoveries)
             for key, value in discoveries.iteritems():

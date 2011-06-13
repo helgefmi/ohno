@@ -1,6 +1,5 @@
 def items():
-    appearances = map(
-        "{0} amulet".format,
+    appearances = (
         ('circular spherical oval triangular pyramidal square concave hexagonal'
          ' octagonal').split()
     )
