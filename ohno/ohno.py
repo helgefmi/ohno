@@ -78,8 +78,8 @@ class Ohno(object):
             # the first pass through this loop.
             if first:
                 first = False
-                self.look()
-                self.discoveries()
+                messages += self.look()
+                messages += self.discoveries()
 
             # Start parsing the messages
             for message in messages:
