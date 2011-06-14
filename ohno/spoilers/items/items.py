@@ -1,6 +1,7 @@
 from collections import defaultdict
 import re
 
+from ohno.event.discovery import Discovery
 from ohno.spoilers.items import amulet, armor, food, gem, other, potion, \
                                 ring, scroll, spellbook, tool, wand, weapon
 
@@ -11,7 +12,9 @@ class Items(object):
         (found in ohno/spoilers/items/*.py), and add the items to
         _item_by_identity and _items_by_appearance.
         """
+        Discovery.subscribe(self.on_discovery)
         self.ohno = ohno
+
         # Maps identity (string) to item (dict).
         self._item_by_identity = dict()
         # Maps appearance (string) to a list of items.
@@ -142,3 +145,6 @@ class Items(object):
             self.ohno.logger.spoilers('New discoveries: %s' % discoveries)
             for key, value in discoveries.iteritems():
                 self.discover(key, value)
+
+    def on_discovery(self, event):
+        self.discover(event.appearance, event.identity)

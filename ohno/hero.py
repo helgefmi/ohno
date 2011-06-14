@@ -64,7 +64,7 @@ class Hero(object):
         self.level = self.xp = None
         self.turns = None
 
-        self.blind = False # TODO
+        self.blind = False
 
     def __str__(self):
         return '<Hero ' + (' '.join('%s=%s' % (key, getattr(self, key))
@@ -98,4 +98,5 @@ class Hero(object):
                 value = int(value or 0)
             setattr(self, key, value)
 
+        self.blind = 'Blind' in bottomlines
         self.ohno.logger.hero('Hero updated: %s' % self)

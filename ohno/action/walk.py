@@ -24,7 +24,8 @@ class Walk(BaseAction):
            not self.next.feature and
            self.next.items and
            self.next in self.ohno.dungeon.curtile.adjacent()):
-            if self.next.appearance.glyph == '$':
+            if (self.next.appearance.glyph == '$' or
+               self.next.appearance.glyph == '*'):
                 self.ohno.logger.action(
                     '[walk] Setting %s to not walkable.' % self.next
                 )

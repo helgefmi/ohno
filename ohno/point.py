@@ -3,6 +3,10 @@ class Point(object):
         self.x = x
         self.y = y
 
+    def __str__(self):
+        return '(%d,%d)' % (self.x, self.y)
+    __repr__ = __str__
+
     def idx(self):
         return self.x + 80 * self.y
 

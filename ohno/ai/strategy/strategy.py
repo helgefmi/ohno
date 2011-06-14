@@ -1,11 +1,13 @@
-from ohno.ai.strategy.explore import Explore
 from ohno.ai.strategy.battle import Battle
+from ohno.ai.strategy.explore import Explore
+from ohno.ai.strategy.blind import Blind
 
 class Strategy(object):
     """The main AI controller"""
     def __init__(self, ohno):
         self.ohno = ohno
         self.strategies = [
+            Blind(ohno),
             Battle(ohno),
             Explore(ohno), 
         ]

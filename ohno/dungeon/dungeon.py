@@ -1,4 +1,5 @@
 from ohno.dungeon.level import Level
+from ohno.event.founditems import FoundItems
 from ohno.event.message import MessageEvent
 
 class Dungeon(object):
@@ -33,7 +34,10 @@ class Dungeon(object):
             )
             if self.curlevel:
                 MessageEvent.unsubscribe(self.curlevel.on_message)
+                FoundItems.unsubscribe(self.curlevel.on_founditems)
             MessageEvent.subscribe(newlevel.on_message)
+            FoundItems.subscribe(newlevel.on_founditems)
+
         self.curlevel = newlevel
 
         idx = self.ohno.hero.position.idx()

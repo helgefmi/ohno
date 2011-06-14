@@ -5,6 +5,9 @@ import re
 from ansiterm import Ansiterm
 
 from ohno.appearance import Appearance
+from ohno.event.discovery import Discovery
+from ohno.event.founditems import FoundItems
+from ohno.event.youdie import YouDie
 from ohno.point import Point
 
 class FrameBuffer(object):
@@ -22,25 +25,48 @@ class FrameBuffer(object):
         self.ansiterm = Ansiterm(24, 80)
 
     def _parse_things_that_are_here(self):
-        screen = self.get_string()
-
-        start_pos = screen.index('Things that are here:')
-        start_x = start_pos % 80
-        start_y = start_pos / 80
-        end_y = screen.index('--More--') / 80
-
+        self.ohno.logger.framebuffer('Parsing "Things that are here"..')
         things = []
-        for y in xrange(start_y + 1, end_y):
-            pos = y * 80 + start_x
-            end_pos = screen.index('  ', pos)
-            # The line might take the rest of this row, in which a space will be
-            # found on another row.
-            end_pos = min(end_pos, y * 80 + 80)
+        while True:
+            screen = self.get_string()
 
-            things.append(screen[y * 80 + start_x:end_pos])
+            if '--More--' not in screen:
+                break
+
+            if screen.index('--More--') / 80 == 0:
+                break
+
+            try:
+                # First iteration
+                start_pos = screen.index('Things that are here:')
+                assert things == []
+                self.ohno.logger.framebuffer('[TTAH] first iteration')
+                start_x = start_pos % 80
+                start_y = start_pos / 80 + 1
+            except ValueError:
+                # Next iterations
+                assert start_x
+                self.ohno.logger.framebuffer('[TTAH] second iteration')
+                start_y = 0
+                
+            end_y = screen.index('--More--') / 80
+            for y in xrange(start_y, end_y):
+                pos = y * 80 + start_x
+                end_pos = screen.index('  ', pos)
+                # In case the text hugs the right border.
+                end_pos = min(end_pos, y * 80 + 80)
+
+                thing = screen[y * 80 + start_x:end_pos]
+                things.append(thing)
+
+            self.ohno.client.send(' ')
+            self.feed(self.ohno.client.receive())
+
         self.ohno.logger.framebuffer('Things that is here: %r' % things)
+        return things
 
     def _parse_discoveries(self):
+        self.ohno.logger.framebuffer('Parsing discoveries..')
         discoveries = []
         start_pos = self.get_string().index('Discoveries')
         start_x = start_pos % 80
@@ -65,15 +91,18 @@ class FrameBuffer(object):
             self.feed(self.ohno.client.receive())
 
         self.ohno.logger.framebuffer('Discoveries: %s' % discoveries)
-        for discovery in discoveries:
-            self.ohno.spoilers.items.discover(*discovery)
+        return discoveries
 
-    def _read_messages(self):
+    def _read_messages(self, receive_first=True):
+        self.ohno.logger.framebuffer('Reading messages..')
         messages = ''
+        first_iter = True
         while True:
-            # Read from the client update the framebuffer
-            data = self.ohno.client.receive()
-            self.feed(data)
+            if not first_iter or receive_first:
+                # Read from the client update the framebuffer
+                data = self.ohno.client.receive()
+                self.feed(data)
+            first_iter = False
 
             # Topline should only contain messages
             messages += self.get_topline().strip()
@@ -94,7 +123,7 @@ class FrameBuffer(object):
             # Read more messages
             self.ohno.client.send(' ')
 
-        messages = messages.replace('--More--', '  ').strip(' ')
+        messages = messages.replace('--More--', '  ').strip()
         return FrameBuffer.split_messages.split(messages)
 
     def update(self):
@@ -107,30 +136,35 @@ class FrameBuffer(object):
         self.ohno.logger.framebuffer('Updating framebuffer..')
 
         messages = self._read_messages()
-        self.ohno.logger.framebuffer('All messages: %r' % messages)
         
         if 'Discoveries' in messages:
             # We should only get this when there's no other messages.
             assert len(messages) == 1
-            return self._parse_discoveries()
+            discoveries = self._parse_discoveries()
+            for appearance, identity in discoveries:
+                Discovery.fire(self.ohno, appearance, identity)
 
         if 'Things that are here:' in self.get_string():
-            self._parse_things_that_are_here()
-            self.ohno.client.send(' ')
-            return messages + self.update()
+            things = self._parse_things_that_are_here()
+            FoundItems.fire(self.ohno, things)
+            # Since we're not synchronized at this moment (there might be an
+            # unparsed topline after calling _parse_things_that_are_here), we
+            # must call _read_messages again.
+            messages += self._read_messages(receive_first=False)
+
+        self.ohno.logger.framebuffer('All messages: %r' % messages)
 
         for message in messages:
             if (message.startswith('Do you want your possessions ') or 
                message.startswith('Do you want to see what you had ') or
-               message.startswith('You die')):
-                self.ohno.logger.framebuffer('Seems like we\'re dead. Cya!')
-                self.ohno.shutdown()
-                print '\n'.join(messages)
-                return
+               message.startswith('You die.')):
+                YouDie.fire(self.ohno, messages)
+                assert False, "Some event should probably exit()"
 
-            if message.startswith('Call a ') or message.startswith('Call an'):
-                self.ohno.client.send('\n')
-                return messages + self.update()
+            # TODO
+            #if message.startswith('Call a ') or message.startswith('Call an'):
+            #    self.ohno.client.send('\n')
+            #    return messages + self.update()
 
         return messages
 

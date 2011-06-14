@@ -8,6 +8,7 @@ from ohno import util
 from ohno.ai.ai import AI
 from ohno.client.client import Client
 from ohno.dungeon.dungeon import Dungeon
+from ohno.event.youdie import YouDie
 from ohno.framebuffer import FrameBuffer
 from ohno.hero import Hero
 from ohno.messages import Messages
@@ -40,6 +41,8 @@ class Ohno(object):
         self.paused = self.running = None
         self.last_action = None
         self.tick = 0
+
+        YouDie.subscribe(self.on_youdie)
 
     def start_resume_game(self):
         """Starts or resumes a nethack game within the current client."""
@@ -124,6 +127,7 @@ class Ohno(object):
         self.client.send('\x1b\x1b\x1b\x1bSyq')
         self.shutdown()
 
+    # actions
     def farlook(self, to_tile):
         from_tile = self.dungeon.curtile
         x1, y1 = from_tile.idx % 80, from_tile.idx / 80
@@ -141,3 +145,11 @@ class Ohno(object):
     def look(self):
         self.client.send(':')
         return self.framebuffer.update()
+
+    # events
+    def on_youdie(self, event):
+        self.logger.ohno('Seems like we\'re dead. Shutting down.')
+        self.shutdown()
+        print '\n'.join(event.messages)
+        print 'I died. Sorry!'
+        exit(0)

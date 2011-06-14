@@ -11,7 +11,9 @@ class Level(object):
             '(?P<peaceful>peaceful )?'
             '(?P<name>.*?)'
             '(?: - .*|, .*)?'
-        '\)$'
+        '\)'
+        '(?: \[seen: .*?\])?'
+        '$'
     )
 
     def __init__(self, ohno, dlvl):
@@ -100,6 +102,11 @@ class Level(object):
         # average.
         return (num_walkable_tiles / 300.) * 100
 
+    @queryable
+    def tiles_where(self):
+        return self.tiles
+
+    # events
     def on_message(self, event):
         curtile = self.ohno.dungeon.curtile
 
@@ -137,6 +144,5 @@ class Level(object):
             )
             self.ohno.last_action.tile.set_feature(appearance.OPEN_DOOR)
 
-    @queryable
-    def tiles_where(self):
-        return self.tiles
+    def on_founditems(self, event):
+        pass # TODO
