@@ -490,32 +490,75 @@ class Monster(object):
         self.mflags2 = args.pop(0) # more boolean bitflags
         self.mflags3 = args.pop(0) # yet more boolean bitflags
         self.mcolor = args.pop(0) # color to use
-        if self.mcolor == CLR_BLACK: self.mcolor = CLR_BLUE
+        if self.mcolor == CLR_BLACK:
+            self.mcolor = CLR_BLUE
 
-        self.appearance = Appearance(self.get_glyph(), {
+        self.appearance = Appearance(self.glyph, {
             'fg': 30 + (self.mcolor % 8),
             'bold': self.mcolor > 8
         })
 
-        assert args == []
-
-    def debug(self):
-        return '<Monster ' + (' '.join('%s=%s' % (key, getattr(self, key))
-                                        for key in self.__dict__) + '>')
-
-    def is_peaceful(self):
-        return self.mflags2 & M2_PEACEFUL > 0
-
-    def get_glyph(self):
-        return Monster.glyphs[self.mlet]
-
     def __str__(self):
         return '<Monster "%s" A=%s P=%s L=%d>' % (
             self.name, self.appearance,
-            int(self.is_peaceful()),
+            int(self.peaceful),
             self.mlevel
         )
     __repr__ = __str__
+
+    @property
+    def glyph(self):
+        return Monster.glyphs[self.mlet]
+
+    @property
+    def peaceful(self):
+        return self.mflags2 & M2_PEACEFUL > 0
+
+    @property
+    def has_proper_name(self):
+        return self.mflags2 & M2_PNAME > 0
+
+    @property
+    def never_drops_corpse(self):
+        return self.geno & G_NOCORPSE > 0
+
+    @property
+    def unique(self):
+        return self.geno & G_UNIQ > 0
+
+    @property
+    def vegan(self):
+        if self.name in ['stalker', 'leather golem', 'flash golem']:
+            return False
+        return self.glyph in "bjFvyE'X"
+
+    @property
+    def vegetarian(self):
+        if self.vegan:
+            return True
+        if self.name == 'black pudding':
+            return False
+        return self.glyph == 'P'
+
+    @property
+    def corpse_nutrition(self):
+        return self.cnutrit
+
+    @property
+    def weight(self):
+        return self.cwt
+
+    @property
+    def corpse_reanimates(self):
+        return self.glyph == 'T'
+
+    @property
+    def lays_eggs(self):
+        return self.mflags1 & M1_OVIPAROUS > 0
+
+    @property
+    def touch_petrifies(self):
+        return self.name in ['cockatrice', 'chickatrice']
 
 # }}}
 # Attack {{{
@@ -939,7 +982,7 @@ def monsters_where():
 # by_ {{{
 
 by_glyph = defaultdict(list)
-map(lambda m:by_glyph[m.get_glyph()].append(m), monsters)
+map(lambda m:by_glyph[m.glyph].append(m), monsters)
 
 by_appearance = defaultdict(list)
 map(lambda m:by_appearance[m.appearance].append(m), monsters)

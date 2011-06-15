@@ -1,4 +1,4 @@
-def items():
+def items(spoilers):
     tools = {
         'Bell of Opening' : {
             'artifact':  1,

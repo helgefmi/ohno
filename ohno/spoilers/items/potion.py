@@ -1,14 +1,14 @@
-appearances = (
-    ('ruby pink orange yellow emerald cyan magenta purple-red puce milky swirly'
-     ' bubbly smoky cloudy effervescent black golden brown fizzy dark white'
-     ' murky').split() + [
-        'dark green',
-        'sky blue',
-        'brilliant blue',
-    ]
-)
+def items(spoilers):
+    appearances = (
+        ('ruby pink orange yellow emerald cyan magenta purple-red puce milky swirly'
+        ' bubbly smoky cloudy effervescent black golden brown fizzy dark white'
+        ' murky').split() + [
+            'dark green',
+            'sky blue',
+            'brilliant blue',
+        ]
+    )
 
-def items():
     potions = {
         'potion of booze' : {
             'price':  50,

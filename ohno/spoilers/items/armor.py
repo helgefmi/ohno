@@ -1,4 +1,4 @@
-def items():
+def items(spoilers):
     a_cloaks = ['tattered cape', 'opera cloak', 'ornamental cope',
                 'piece of cloth']
     a_helmets = map('{0} helmet'.format,

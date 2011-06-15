@@ -1,4 +1,4 @@
-def items():
+def items(spoilers):
     gems = {
         'Heart of Ahriman' : {
             'artifact':  1,

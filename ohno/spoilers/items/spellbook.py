@@ -1,4 +1,4 @@
-def items():
+def items(spoilers):
     appearances = (
         ('parchment vellum ragged mottled stained cloth leather white pink red'
          ' orange yellow velvet turquoise cyan indigo magenta purple violet'

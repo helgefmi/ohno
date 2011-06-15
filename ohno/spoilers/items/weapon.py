@@ -1,4 +1,4 @@
-def items():
+def items(spoilers):
     weapons = {
         'Cleaver' : {
             'artifact':  1,

@@ -1,4 +1,4 @@
-def items():
+def items(spoilers):
     appearances = (
         ('circular spherical oval triangular pyramidal square concave hexagonal'
          ' octagonal').split()

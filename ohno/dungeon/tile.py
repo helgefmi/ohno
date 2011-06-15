@@ -24,6 +24,7 @@ class Tile(object):
         self.appearance = None
         self.feature = None
         self.monster = None
+        self.items = []
         self.has_hero = None
         self.has_items = None
         self.dirty_items = None
@@ -118,7 +119,7 @@ class Tile(object):
                             _tile_is_walkable(appearance))
 
     def set_monster(self, appearance):
-        """Sets self.monster and updates Levle.monsters"""
+        """Sets self.monster and updates ohno.dungeon.curlevel.monsters"""
         new_monster = None
         if appearance is not None:
             new_monster = monster.create(self, appearance)
@@ -131,9 +132,9 @@ class Tile(object):
 
         if new_monster:
             self.level.monsters.append(new_monster)
-            # Sometimes, a monster can open a door and right on it in one turn,
-            # this will confuse ohno as it will still think it's a door under
-            # the monster.
+            # Sometimes, a monster can open a door and walk onto the tile in
+            # one turn, this will confuse ohno as it will still think it's a
+            # door under the monster.
             if self.feature_isa('Door') and self.feature.closed:
                 self.feature = None
 
@@ -146,14 +147,6 @@ class Tile(object):
         """
         assert self.ohno.ai.pathing.tick == self.ohno.tick
         return self.ohno.ai.pathing.dists[self.idx]
-
-    def feature_isa(self, class_name):
-        return self.feature_name == class_name
-
-    def is_open_door(self):
-        return (self.feature and
-                self.feature.appearance.glyph in '-|' and
-                self.feature.appearance.fg == 33)
 
     # Methods for iterating neighbors
     @queryable
@@ -201,6 +194,14 @@ class Tile(object):
         return self._horizontal
 
     # Methods to make it simpler to query
+    def feature_isa(self, class_name):
+        return self.feature_name == class_name
+
+    def is_open_door(self):
+        return (self.feature and
+                self.feature.appearance.glyph in '-|' and
+                self.feature.appearance.fg == 33)
+
     @property
     def is_wall(self):
         return (self.explored and self.feature and 

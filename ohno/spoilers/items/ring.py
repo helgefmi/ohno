@@ -1,4 +1,4 @@
-def items():
+def items(spoilers):
     appearances = (
         ('wooden granite opal clay coral moonstone jade bronze agate topaz'
          ' sapphire ruby diamond pearl iron brass copper twisted steel silver'

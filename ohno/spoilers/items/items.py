@@ -6,7 +6,7 @@ from ohno.spoilers.items import amulet, armor, food, gem, other, potion, \
                                 ring, scroll, spellbook, tool, wand, weapon
 
 class Items(object):
-    def __init__(self, ohno):
+    def __init__(self, ohno, spoilers):
         """
         This will iterate through all the item spoilers
         (found in ohno/spoilers/items/*.py), and add the items to
@@ -31,7 +31,7 @@ class Items(object):
                     getattr(module, 'appearance_plurals')()
                 )
 
-            items, defaults = getattr(module, 'items')()
+            items, defaults = getattr(module, 'items')(spoilers)
             self.ohno.logger.spoilers('Getting %d items from %s' % (
                 len(items), module)
             )

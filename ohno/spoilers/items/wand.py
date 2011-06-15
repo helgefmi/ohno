@@ -1,4 +1,4 @@
-def items():
+def items(spoilers):
     appearances = (
         ('glass balsa crystal maple pine oak ebony marble tin brass copper'
          ' silver platinum iridium zinc aluminum uranium iron steel hexagonal'

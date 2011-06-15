@@ -1,4 +1,4 @@
-def items():
+def items(spoilers):
     others = {
         'gold piece' : {
             'price':  1,

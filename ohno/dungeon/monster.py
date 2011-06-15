@@ -46,11 +46,11 @@ class Monster(object):
         if self.peaceful is not None:
             return self.peaceful
         if self.spoiler:
-            return self.spoiler.is_peaceful()
+            return self.spoiler.peaceful
         spoilers = self._get_possible_spoilers()
         if spoilers:
             for spoiler in spoilers:
-                if not spoiler.is_peaceful():
+                if not spoiler.peaceful:
                     return False
             return True
         return None

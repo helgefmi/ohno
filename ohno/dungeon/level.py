@@ -2,6 +2,7 @@ import re
 
 from queryable import queryable
 
+from ohno.dungeon import item as itemlib
 from ohno.dungeon.tile import Tile
 from ohno import appearance
 
@@ -146,4 +147,7 @@ class Level(object):
 
     def on_founditems(self, event):
         curtile = self.ohno.dungeon.curtile
-        items = event.items
+        items = []
+        for appearance in event.items:
+            item = itemlib.create(self.ohno, appearance)
+            items.append(item)
