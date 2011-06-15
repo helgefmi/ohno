@@ -8,6 +8,8 @@ from ohno import util
 from ohno.ai.ai import AI
 from ohno.client.client import Client
 from ohno.dungeon.dungeon import Dungeon
+from ohno.event.founditems import FoundItems
+from ohno.event.message import MessageEvent
 from ohno.event.youdie import YouDie
 from ohno.framebuffer import FrameBuffer
 from ohno.hero import Hero
@@ -44,6 +46,7 @@ class Ohno(object):
         self.all_messages = []
 
         YouDie.subscribe(self.on_youdie)
+        MessageEvent.subscribe(self.on_message)
 
     def start_resume_game(self):
         """Starts or resumes a nethack game within the current client."""
@@ -155,3 +158,8 @@ class Ohno(object):
         print '\n'.join(event.messages)
         print 'I died. Sorry!'
         exit(0)
+
+    def on_message(self, event):
+        if event.msgtype == 'you_see_here':
+            thing = event.kwargs['item']
+            FoundItems.fire(self, [thing])

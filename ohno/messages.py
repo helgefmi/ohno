@@ -13,6 +13,7 @@ class Messages(object):
         '^As you kick the door, it crashes open': 'kicked_door',
         '^The door opens\.': 'opened_door',
         '^A trap door opens up under you': 'fell_through_trapdoor',
+        '^You see here (?P<item>.+?)\.?$': 'you_see_here',
     }
 
     def __init__(self, ohno):

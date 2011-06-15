@@ -74,7 +74,7 @@ class Level(object):
         # If it doesn't, we need to set the tile to not walkable.
         if not self.ohno.hero.blind:
             for tile in self.ohno.dungeon.curtile.adjacent():
-                if not tile.items:
+                if not tile.has_items:
                     tile.explored = True
                 if tile.appearance.glyph == ' ':
                     tile._walkable = False
@@ -145,4 +145,5 @@ class Level(object):
             self.ohno.last_action.tile.set_feature(appearance.OPEN_DOOR)
 
     def on_founditems(self, event):
-        pass # TODO
+        curtile = self.ohno.dungeon.curtile
+        items = event.items

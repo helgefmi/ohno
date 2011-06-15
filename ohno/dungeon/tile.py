@@ -4,7 +4,6 @@ from queryable import queryable
 
 from ohno.dungeon import monster
 from ohno.dungeon.feature import feature
-from ohno.dungeon.item import item
 
 _tile_is_feature  = lambda t: t.glyph in '.}{#_<>]^|-~ \\'
 _tile_is_item     = lambda t: t.glyph in '`0*$[%)(/?!"=+'
@@ -22,10 +21,13 @@ class Tile(object):
         self.explored = False
         self.searched = 0
 
+        self.appearance = None
         self.feature = None
-        self.items = []
         self.monster = None
         self.has_hero = None
+        self.has_items = None
+        self.dirty_items = None
+        self.topmost_item_appearance = None
 
         self._adjacent = None
         self._orthogonal = None
@@ -50,66 +52,70 @@ class Tile(object):
         color has been changed since since the last update.
         `appearance` is "newly copied" (i.e. it's safe to change)
         """
+        assert self.appearance != appearance
+        self.appearance = appearance
         if _tile_is_feature(appearance):
-            # Spaces ("dark part of the room") can never be set to explored
-            # unless we have been adjacent to the square yet. This logic is
-            # found in ohno.dungeon.level.
-            self.explored = self.explored or appearance.glyph != ' '
             # If it's the first time we're seeing the feature of this tile or if
             # it has changed (i.e. water can spread to nearby floortiles).
             if not self.feature or self.feature.appearance != appearance:
                 self.set_feature(appearance)
-            self.items = []
+
+            # Spaces ("dark part of the room") can never be set to explored
+            # unless we have been adjacent to the square yet. This logic is
+            # found in ohno.dungeon.level.
+            self.explored = self.explored or appearance.glyph != ' '
+
+            self.has_items = False
             self.has_hero = False
             self.set_monster(None)
-
         elif _tile_is_item(appearance):
-            self.ohno.logger.tile('Itemtile! %r' % self)
-            self._walkable = True
-            self.has_hero = False
-            self.set_monster(None)
-
             # If the appearance of the tile changes (i.e. something else
             # has dropped, or a monster picking up the topmost item),
-            # we'll completely remove any previous examined items,
-            # since the hero should reexamine the tile anyway.
+            # we'll set the dirty_items to True.
             # If it stays the same, we'll simply assume nothing has changed.
-            if not self.items or self.items[-1].appearance != appearance:
-                self.ohno.logger.tile('New item!')
-                self.items = [item.create(self, appearance)]
-                # Since this tile might have new information,
-                # we set explored to False. That way, it'll be easier for our AI
-                # to know this square is interesting.
-                self.explored = False
-            self.ohno.logger.tile('Itemtile is now %r' % self)
+            if self.topmost_item_appearance != appearance:
+                self.ohno.logger.tile('Items has changed on %s' % self)
+                self.dirty_items = True
+                self.topmost_item_appearance = appearance
+
+            self._walkable = True
+            self.has_hero = False
+            self.has_items = True
+            self.set_monster(None)
 
         elif self == self.ohno.dungeon.curtile:
-            self.ohno.logger.tile('Herotile! %r' % self)
-            assert not self.has_hero
-            self._walkable = True
-            self.has_hero = True
-            self.set_monster(None)
             if self.ohno.hero.appearance != appearance:
                 # Not sure if we need this, but this seems like a good place to
                 # check if we're polymorphed.
                 self.ohno.hero.set_appearance(appearance)
-            self.ohno.logger.tile('Herotile is now %r' % self)
+
+            self._walkable = True
+            self.has_hero = True
+            self.set_monster(None)
 
         elif _tile_is_monster(appearance):
-            # TODO: Might not be true if this is a stone giant standing on a
-            #       boulder.
-            self.ohno.logger.tile('Monstertile! %r' % self)
-            self.has_hero = False
-            self._walkable = True
-            if (not self.monster) or self.monster.appearance != appearance:
-                self.ohno.logger.tile('New monster!')
+            if not self.monster or self.monster.appearance != appearance:
+                self.ohno.logger.tile('New monster at %s' % self)
                 self.set_monster(appearance)
-            self.ohno.logger.tile('Monstertile is now %r' % self)
+            self._walkable = True
+            self.has_hero = False
+
+        # Sanity check
+        if self.monster is not None:
+            assert appearance == self.monster.appearance
+        elif self.has_hero:
+            assert appearance == self.ohno.hero.appearance
+        elif self.has_items:
+            assert appearance == self.topmost_item_appearance
+        elif self.feature is not None:
+            assert appearance == self.feature.appearance
+        else:
+            assert False
 
     def set_feature(self, appearance):
-            self.feature = feature.create(self, appearance)
-            self._walkable = (self.is_open_door() or
-                                _tile_is_walkable(appearance))
+        self.feature = feature.create(self, appearance)
+        self._walkable = (self.is_open_door() or
+                            _tile_is_walkable(appearance))
 
     def set_monster(self, appearance):
         """Sets self.monster and updates Levle.monsters"""
@@ -132,22 +138,6 @@ class Tile(object):
                 self.feature = None
 
         self.monster = new_monster
-
-    @property
-    def appearance(self):
-        """What does this tile look like right now?"""
-        # This could be cached, but doing it like this works as a sanity check
-        # aswell :-)
-        if self.monster is not None:
-            return self.monster.appearance
-        elif self.has_hero:
-            return self.ohno.hero.appearance
-        elif self.items:
-            return self.items[-1].appearance
-        elif self.feature is not None:
-            return self.feature.appearance
-        else:
-            return None
 
     def distance_from_hero(self):
         """
