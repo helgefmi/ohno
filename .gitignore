@@ -1,5 +1,6 @@
 /lib
-/logs/*
 /savegames
+/ttyrecs
+/logs/*
 *.pyc
 .*.swp

@@ -44,3 +44,4 @@ FLOOR = Appearance('.', {'fg': 37, 'bold': False})
 # monsters
 INVISIBLE_MONSTER = Appearance('I', {'fg': 37, 'bold': False})
 MIMIC = Appearance('m', {'fg': 34, 'bold': False})
+PLAYER_GHOST = Appearance('X', {'fg': 37, 'bold': False})

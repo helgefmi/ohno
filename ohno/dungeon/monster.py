@@ -10,40 +10,50 @@ class Monster(object):
 
         # Means we haven't explicitly checked yet.
         self.peaceful = None
-        self.spoilers = self.ohno.spoilers.monsters.by_appearance[maptile]
-        self.ohno.logger.monster('Found spoiler: %s' % self.spoilers)
 
-        if str(maptile) not in ['I7', 'X7', 'm4']:
-            assert self.spoilers, maptile
+        # Check spoilers.
+        spoilers = self._get_possible_spoilers()
+        self.ohno.logger.monster('Monster can be %s' % spoilers)
+        self.spoiler = spoilers[0] if len(spoilers) == 1 else None
+        self.ohno.logger.monster('self.spoiler is now %s' % self.spoiler)
 
     def __str__(self):
         return '<Monster S=%s P=%s>' % (
-            self.spoilers, self.peaceful
+            self.spoiler, self.peaceful
         )
     __repr__ = __str__
 
+    def _get_possible_spoilers(self):
+        return self.ohno.spoilers.monsters.by_appearance[self.appearance]
+
     def monster_info(self, info):
+        self.ohno.logger.monster('Got some monster_info: %s' % info)
         self.peaceful = bool(info['peaceful'])
-        self.ohno.logger.monster('Is %s is peaceful? %s!' % (
-            self, self.peaceful
-        ))
 
         name = info['name']
         if name in self.ohno.spoilers.shopkeeper.all_names:
             name = 'shopkeeper'
-
         if name.startswith('priest of ') or name.startswith('priestess of '):
             name, _, god = name.split(' ')
 
-        self.spoilers = [x for x in self.spoilers if x.name == name]
-        assert len(self.spoilers) == 1, self
-        self.ohno.logger.monster('Spoiler is %s' % self.spoilers[0])
+        spoilers = [x for x in self._get_possible_spoilers() if x.name == name]
+        assert len(spoilers) == 1, (self, self._get_possible_spoilers())
+        self.spoiler = spoilers[0]
+        self.ohno.logger.monster('Spoiler is %s' % self.spoiler)
 
     @property
     def is_peaceful(self):
         if self.peaceful is not None:
             return self.peaceful
-        return self.spoilers and all(x.is_peaceful() for x in self.spoilers)
+        if self.spoiler:
+            return self.spoiler.is_peaceful()
+        spoilers = self._get_possible_spoilers()
+        if spoilers:
+            for spoiler in spoilers:
+                if not spoiler.is_peaceful():
+                    return False
+            return True
+        return None
 
 def create(ohno, maptile):
     """Checks `maptile` for which monster to create"""

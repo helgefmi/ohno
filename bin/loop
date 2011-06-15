@@ -1,1 +1,8 @@
-while true; do bin/ohno; echo "sleeping .."; sleep 5; done
+while true
+do
+    NOW=$(date +%d%m%y_%H%M%S)
+    ttyrec -e bin/ohno cur.ttyrec
+    mv cur.ttyrec ttyrecs/${NOW}.ttyrec
+    echo "sleeping .."
+    sleep 3
+done

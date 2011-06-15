@@ -8,7 +8,7 @@ from ohno import appearance
 class Level(object):
     inspectname = re.compile(
         '\('
-            '(?P<peaceful>peaceful )?'
+            '(?P<peaceful>peaceful )?'  # peaceful watch captain
             '(?P<name>.*?)'
             '(?: - .*|, .*)?'
         '\)'
@@ -32,13 +32,13 @@ class Level(object):
         # Check to see if there's a monster on this level that we're not sure
         # what is yet. 
         for monster in self.monsters:
-            if not (len(monster.spoilers) > 1 or
-                    (monster.peaceful is None and not monster.is_peaceful)):
+            if monster.peaceful is not None:
                 continue
 
             # No point in farlooking invisibles.
             if (monster.appearance == appearance.INVISIBLE_MONSTER or
-               monster.appearance == appearance.MIMIC):
+               monster.appearance == appearance.MIMIC or
+               monster.appearance == appearance.PLAYER_GHOST):
                 continue
 
             self.ohno.logger.level('Doing farlook on %s (%s)' % (
