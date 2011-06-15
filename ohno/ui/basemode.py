@@ -20,6 +20,9 @@ class BaseMode(object):
             hero.dlvl, hero.hp, hero.maxhp, hero.ac, hero.level,
             hero.turns, hero.gold
         )
+
+    def rightpane(self):
+        return '\n'.join(reversed(self.ohno.all_messages[-20:]))
     
     def on_input(self, input):
         if input == '|':

@@ -92,3 +92,10 @@ class DebugMode(BaseMode):
             hero.dlvl, hero.hp, hero.maxhp, hero.ac, hero.level, hero.turns,
             hero.gold
         )
+
+    def rightpane(self):
+        idx = self.get_cursor_idx()
+        tile = self.ohno.dungeon.curlevel.tiles[idx]
+        if not tile.items:
+            return super(DebugMode, self).rightpane()
+        return '\n'.join(str(item) for item in tile.items)

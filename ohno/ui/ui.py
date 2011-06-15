@@ -1,4 +1,7 @@
+from __future__ import absolute_import
+
 import bpython
+import curses
 
 from ohno.ui.curses import Curses
 from ohno.ui.normalmode import NormalMode
@@ -20,6 +23,7 @@ class UI(object):
     def update(self):
         self.curses.draw_maptiles()
         self.curses.draw_botlines()
+        self.curses.draw_rightpane()
 
         input = self.curses.getch()
         if 0 < input < 255:
@@ -34,6 +38,7 @@ class UI(object):
             'ohno': self.ohno
         }
         embedded_locals.update(kwargs)
+        curses.curs_set(1)
         bpython.embed(locals_=embedded_locals)
         # Since bpython will modify our curses setup, we need to
         # reinitialize curses (nodelay, noecho, ..).

@@ -124,7 +124,10 @@ class FrameBuffer(object):
             self.ohno.client.send(' ')
 
         messages = messages.replace('--More--', '  ').strip()
-        return FrameBuffer.split_messages.split(messages)
+        ret = FrameBuffer.split_messages.split(messages)
+        if ret == ['']:
+            return []
+        return ret
 
     def update(self):
         """

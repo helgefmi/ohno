@@ -41,6 +41,7 @@ class Ohno(object):
         self.paused = self.running = None
         self.last_action = None
         self.tick = 0
+        self.all_messages = []
 
         YouDie.subscribe(self.on_youdie)
 
@@ -65,6 +66,7 @@ class Ohno(object):
             # because we want to update the hero and dungeon before sending them
             # to ohno.messages.
             messages = self.framebuffer.update()
+            self.all_messages.extend(messages)
 
             # framebuffer.update() might shut us down if we're dead.
             if not self.running:

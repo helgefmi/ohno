@@ -11,6 +11,17 @@ class Curses(object):
         curses.COLOR_CYAN,  curses.COLOR_WHITE
     )
 
+    @classmethod
+    def convert_color(cls, appearance):
+        fg = appearance.fg - 30
+        return curses.color_pair(cls._ansi_to_curses_colors[fg])
+    
+    @classmethod
+    def init_colors(cls):
+        # the first pair (index 0) is hardcoded to black on black
+        for x in xrange(1, 8):
+            curses.init_pair(x, cls._ansi_to_curses_colors[x], 0)
+
     def __init__(self, ohno):
         """Initialises curses; remember to .shutdown()!"""
         self.ohno = ohno
@@ -25,6 +36,7 @@ class Curses(object):
         self.init_colors()
         curses.noecho()
         curses.cbreak()
+        curses.curs_set(0)
         self._scr.keypad(1)
         self._scr.nodelay(1)
         self._scr.move(0, 0)
@@ -37,6 +49,7 @@ class Curses(object):
         self.ohno.logger.curses('Shutting down..')
         self._scr.keypad(0)
         self._scr.nodelay(0)
+        curses.curs_set(1)
         curses.echo()
         curses.nocbreak()
         curses.endwin()
@@ -65,13 +78,10 @@ class Curses(object):
         self._scr.addstr(21, 0, first)
         self._scr.addstr(22, 0, second)
 
-    @classmethod
-    def convert_color(cls, appearance):
-        fg = appearance.fg - 30
-        return curses.color_pair(cls._ansi_to_curses_colors[fg])
-    
-    @classmethod
-    def init_colors(cls):
-        # the first pair (index 0) is hardcoded to black on black
-        for x in xrange(1, 8):
-            curses.init_pair(x, cls._ansi_to_curses_colors[x], 0)
+    def draw_rightpane(self):
+        string = self.ohno.ui.mode.rightpane()
+        lines = string.split('\n')
+        for y in xrange(23):
+            line = lines[y] if y < len(lines) else ''
+            line = line.ljust(50)[:50]
+            self._scr.addstr(y, 80, line)
