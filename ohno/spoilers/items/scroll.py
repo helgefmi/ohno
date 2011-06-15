@@ -1,12 +1,12 @@
 def items(spoilers):
-    appearances = [
+    appearances = map('scroll labeled {0}'.format, [
         'ZELGO MER', 'JUYED AWK YACC', 'NR 9', 'XIXAXA XOXAXA XUXAXA',
         'PRATYAVAYAH', 'DAIYEN FOOELS', 'LEP GEX VEN ZEA', 'PRIRUTSENIE',
         'ELBIB YLOH', 'TEMOV', 'VERR YED HORRE', 'VENZAR BORGAVVE', 'THARR',
         'YUM YUM', 'KERNOD WEL', 'ELAM EBOW', 'DUAM XNAHT', 'KIRJE',
         'ANDOVA BEGARIN', 'VE FORBRYDERNE', 'HACKEM MUCHE', 'VELOX NEB',
         'READ ME', 'FOOBIE BLETCH', 'GARVEN DEH',
-    ]
+    ])
 
     scrolls = {
         'scroll of mail' : {

@@ -1,5 +1,5 @@
 def items(spoilers):
-    appearances = (
+    appearances = map('{0} potion'.format,
         ('ruby pink orange yellow emerald cyan magenta purple-red puce milky swirly'
         ' bubbly smoky cloudy effervescent black golden brown fizzy dark white'
         ' murky').split() + [
@@ -42,7 +42,7 @@ def items(spoilers):
         },
         'potion of water' : {
             'price':  100,
-            'appearance':  'clear',
+            'appearance':  'clear potion',
         },
         'potion of blindness' : {
             'price':  150,

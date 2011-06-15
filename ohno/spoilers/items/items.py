@@ -61,6 +61,13 @@ class Items(object):
                 if plural is not None:
                     self._identity_plurals[plural] = identity
 
+        # Sanity check.
+        for _, items in self._items_by_appearance.iteritems():
+            curtype = None
+            for _, item in items.iteritems():
+                if curtype is None: curtype = item['type']
+                assert curtype == item['type']
+
     def _singularize_identity(self, key):
         if key in self._identity_plurals:
             return self._identity_plurals[key]
@@ -75,12 +82,12 @@ class Items(object):
         if key in self._appearance_plurals:
             key = self._appearance_plurals[key]
 
-        key = re.compile(' potions?$').sub('', key)
-        key = re.compile('^scrolls? labeled ').sub('', key)
-        key = re.compile(' spellbooks?$').sub('', key)
-        key = re.compile(' rings?$').sub('', key)
-        key = re.compile(' wands?$').sub('', key)
-        key = re.compile(' amulets?$').sub('', key)
+        key = key.replace('wands', 'wand')
+        key = key.replace('spellbooks', 'spellbook')
+        key = key.replace('scrolls', 'scroll')
+        key = key.replace('rings', 'ring')
+        key = key.replace('potions', 'potion')
+        key = key.replace('amulets', 'amulet')
 
         return key
 

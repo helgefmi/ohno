@@ -1,5 +1,5 @@
 def items(spoilers):
-    appearances = (
+    appearances = map('{0} wand'.format,
         ('glass balsa crystal maple pine oak ebony marble tin brass copper'
          ' silver platinum iridium zinc aluminum uranium iron steel hexagonal'
          ' short runed long curved forked spiked jeweled').split()

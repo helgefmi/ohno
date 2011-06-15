@@ -1,5 +1,5 @@
 def items(spoilers):
-    appearances = (
+    appearances = map('{0} spellbook'.format,
         ('parchment vellum ragged mottled stained cloth leather white pink red'
          ' orange yellow velvet turquoise cyan indigo magenta purple violet'
          ' tan plaid gray wrinkled dusty bronze copper silver gold'

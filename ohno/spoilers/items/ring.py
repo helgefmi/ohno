@@ -1,5 +1,5 @@
 def items(spoilers):
-    appearances = (
+    appearances = map('{0} ring'.format,
         ('wooden granite opal clay coral moonstone jade bronze agate topaz'
          ' sapphire ruby diamond pearl iron brass copper twisted steel silver'
          ' gold ivory emerald wire engagement shiny').split() + [

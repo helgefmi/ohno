@@ -1,11 +1,10 @@
 def items(spoilers):
     a_cloaks = ['tattered cape', 'opera cloak', 'ornamental cope',
                 'piece of cloth']
-    a_helmets = map('{0} helmet'.format,
-        'plumed etched crested visored'.split())
+    a_helmets = map('{0} helmet'.format, 'plumed etched crested visored'.split())
     a_gloves = map('{0} gloves'.format, 'old padded riding fencing'.split())
-    a_boots = map('{0} boots'.format,
-        'combat jungle hiking mud buckled riding snow'.split())
+    a_boots = map('{0} boots'.format, ('combat jungle hiking mud buckled'
+                                       ' riding snow'.split()))
 
     armor = {
         'Mitre of Holiness' : {

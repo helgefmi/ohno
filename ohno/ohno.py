@@ -33,12 +33,12 @@ class Ohno(object):
         # all take an ohno instance as the first argument.
         self.client = Client(self)
         self.framebuffer = FrameBuffer(self)
-        self.ui = UI(self)
         self.hero = Hero(self)
         self.dungeon = Dungeon(self)
         self.ai = AI(self)
         self.messages = Messages(self)
         self.spoilers = Spoilers(self)
+        self.ui = UI(self)
 
         self.paused = self.running = None
         self.last_action = None
