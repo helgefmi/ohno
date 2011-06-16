@@ -23,13 +23,24 @@ class Walk(BaseAction):
         return util.delta2vi(delta)
 
     def done(self, messages):
-        if self._last_hero_tile != self.ohno.dungeon.curtile:
+        curtile = self.ohno.dungeon.curtile
+        next = self.next
+
+        if self._last_hero_tile != curtile:
             return
 
-        assert self.next.feature is None
+        if (curtile.feature_isa('Trap') and
+           curtile.feature.is_pit):
+            return
 
-        curtile_walls = set(self.ohno.dungeon.curtile.adjacent(is_wall=True))
-        nexttile_walls = set(self.next.adjacent(is_wall=True))
+        # If a monster suddenly appeared.
+        if next.monster:
+            return
+
+        assert next.feature is None, next
+
+        curtile_walls = set(curtile.adjacent(is_wall=True))
+        nexttile_walls = set(next.adjacent(is_wall=True))
         shared_walls = curtile_walls.intersection(nexttile_walls)
 
         # Moving diagonally through open doors is illegal.
@@ -41,11 +52,11 @@ class Walk(BaseAction):
 
         if moved_diagonally and shares_one_wall:
             self.ohno.logger.action(
-                '[walk] Setting %s to open door.' % self.next
+                '[walk] Setting %s to open door.' % next
             )
-            self.next.set_feature(appearance.OPEN_DOOR)
-        elif self.next.appearance.glyph in '$*':
+            next.set_feature(appearance.OPEN_DOOR)
+        elif next.appearance.glyph in '$*':
             self.ohno.logger.action(
-                '[walk] Setting %s to not walkable.' % self.next
+                '[walk] Setting %s to not walkable.' % next
             )
-            self.next._walkable = False
+            next._walkable = False

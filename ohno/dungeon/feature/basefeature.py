@@ -5,6 +5,9 @@ class BaseFeature(object):
     (i.e. Altar, Fountain, Floor), and some common methods for all the features.
     """
 
-    def __init__(self, ohno, maptile):
+    def __init__(self, ohno, appearance):
         self.ohno = ohno
-        self.appearance = maptile
+        self.appearance = appearance
+
+    def isa(self, what):
+        return self.__class__.__name__.lower() == what.lower()

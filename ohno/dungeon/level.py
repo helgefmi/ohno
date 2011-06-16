@@ -138,6 +138,12 @@ class Level(object):
             )
             tile.set_feature(appearance.FLOOR)
 
+        if event.msgtype == 'found_pit':
+            self.ohno.logger.level(
+                'Setting %s to pit.' % self.ohno.dungeon.curtile
+            )
+            self.ohno.dungeon.curtile.set_feature(appearance.PIT)
+
         if event.msgtype == 'opened_door':
             assert self.ohno.last_action.isa('Open')
             self.ohno.logger.level(

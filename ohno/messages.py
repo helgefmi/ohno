@@ -14,6 +14,11 @@ class Messages(object):
         '^The door opens\.': 'opened_door',
         '^A trap door opens up under you': 'fell_through_trapdoor',
         '^You see here (?P<item>.+?)\.?$': 'you_see_here',
+        '^You are still in a pit\.$': 'found_pit',
+        '^There is a pit here\.$': 'found_pit',
+        '^You land on a set of sharp iron spikes!$': 'found_pit',
+        '^KAABLAMM!!!$': 'found_pit',
+        '^You fall into (?:a|your) pit!$': 'found_pit',
     }
 
     def __init__(self, ohno):
