@@ -100,7 +100,7 @@ class Ohno(object):
             # of an action (example: what happened when I read the unidentified
             # scroll?). This could be used for sanity checks aswell.
             if self.last_action:
-                self.last_action.done()
+                self.last_action.done(messages)
 
             # Ask the AI for the next action and send the key strokes needed for
             # that action.

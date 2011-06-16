@@ -164,10 +164,13 @@ class FrameBuffer(object):
                 YouDie.fire(self.ohno, messages)
                 assert False, "Some event should probably exit()"
 
-            # TODO
-            #if message.startswith('Call a ') or message.startswith('Call an'):
-            #    self.ohno.client.send('\n')
-            #    return messages + self.update()
+            if message.startswith('Call a'):
+                self.ohno.client.send('\n')
+                return messages + self.update()
+
+            if message.startswith('Hello stranger, who are you'):
+                self.ohno.client.send('\n')
+                return messages + self.update()
 
         return messages
 

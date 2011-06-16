@@ -10,10 +10,12 @@ class Search(BaseAction):
         self.times = times
 
     def get_command(self):
-        self.ohno.logger.action('[search] Getting command to search %d times..' % self.times)
+        self.ohno.logger.action(
+            '[search] Getting command to search %d times..' % self.times
+        )
         return '%ds' % self.times
 
-    def done(self):
+    def done(self, messages):
         """Update adjacent squares with the amount of searching we've done"""
         self.curtile.searched += self.times
         for neighbor in self.curtile.adjacent():

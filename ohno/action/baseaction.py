@@ -5,7 +5,7 @@ class BaseAction(object):
     def get_command(self):
         raise NotImplementedError()
 
-    def done(self):
+    def done(self, messages):
         pass
 
     def isa(self, name):
