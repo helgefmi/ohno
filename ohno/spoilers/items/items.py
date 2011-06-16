@@ -154,4 +154,14 @@ class Items(object):
                 self.discover(key, value)
 
     def on_discovery(self, event):
-        self.discover(event.appearance, event.identity)
+        appearance = event.appearance
+        identity = event.identity
+
+        # When we get messages from the discovery menu (\ in nethack), the
+        # appearance might just state the colors/materials, and not if it's a
+        # ring/potion, so we "hack" that in here.
+        if (identity.startswith('potion of') and
+           appearance.find('potion') == -1):
+            appearance = '%s potion' % appearance
+
+        self.discover(appearance, event.identity)
